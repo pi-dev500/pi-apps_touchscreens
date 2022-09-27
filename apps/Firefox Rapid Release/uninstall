@@ -1,0 +1,4 @@
+#!/bin/bash
+purge_packages || exit 1
+sudo rm -f /etc/apt/preferences.d/99bionic-updates
+sudo rm -f /etc/apt/sources.list.d/firefox-ubuntu.list

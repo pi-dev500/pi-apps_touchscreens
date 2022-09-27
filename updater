@@ -1,0 +1,98 @@
+#!/bin/bash
+
+DIRECTORY="$(readlink -f "$(dirname "$0")")"
+
+function error {
+  echo -e "\e[91m$1\e[39m"
+  exit 1
+}
+cd "$DIRECTORY"
+rm -rf update
+mkdir -p update
+cd update
+rm -rf ./apps
+ARCH="$(echo "uname -m | sed 's/armv8l/64/g' | sed 's/aarch64/64/g' | grep -sv armv
+echo 32" | bash | head -1)"
+echo "ARCHITECTURE: arm$ARCH"
+if ! svn help >/dev/null;then
+	echo "Installing svn..."
+	sudo apt update
+	sudo apt install subversion -y | exit
+fi
+echo "Downloading apps..."
+svn checkout https://github.com/botspot/pi-apps/trunk/apps/ | awk 'BEGIN {FS="/" } { print $2 }' | while read line; do printf "\r$line                         ";done
+echo -e "\nDownloading icons..." 
+svn checkout https://github.com/botspot/pi-apps/trunk/icons/ | awk 'BEGIN {FS="/" } { print $2 }' | while read line; do printf "\r$line                         ";done
+echo
+echo -e "\nFinishing update..."
+cd ..
+rm -rf ./categories
+wget -q https://raw.githubusercontent.com/Botspot/pi-apps/master/etc/categories
+cd update
+rm -rf */.svn
+cd apps
+ls>../applist
+echo "Recreating preload for each folders and apps..."
+ls -N | while read line; do
+	printf " $line             \r" 
+	directory="$(cat ../../categories | grep "$line""|" | awk 'BEGIN {FS="|" } { print $2 }' | head -n1 )"
+	mkdir -p "$directory" "All Apps" 
+	if [ ! -f "../../status/$line" ];then
+		mkdir -p ../../status
+		echo -e "uninstalled" >"../../status/$line"
+	fi
+	cat "$line/install-$ARCH" >/dev/null 2>/dev/null && printf "{\"name\" :\"$line\",\"label\":\"$line\",\"status\":\"($(cat "$DIRECTORY/status/$line"))\",\"icon\":\"$DIRECTORY/apps/$line/icon-64.png\",\"color\":\"#F22F2F\"}">"All Apps/$line.json" # Pre-generate apps json
+	cat "$line/install" >/dev/null 2>/dev/null && printf "{\"name\" :\"$line\",\"label\":\"$line\",\"status\":\"($(cat "$DIRECTORY/status/$line"))\",\"icon\":\"$DIRECTORY/apps/$line/icon-64.png\",\"color\":\"#F22F2F\"}">"All Apps/$line.json" # Pre-generate apps json
+	cat "$line/packages" >/dev/null 2>/dev/null && printf "{\"name\" :\"$line\",\"label\":\"$line\",\"status\":\"($(cat "$DIRECTORY/status/$line"))\",\"icon\":\"$DIRECTORY/apps/$line/icon-64.png\",\"color\":\"#F22F2F\"}">"All Apps/$line.json" # Pre-generate apps json
+	cat "All Apps/$line.json" >/dev/null 2>/dev/null && ln -sr "All Apps/$line.json" "$directory/$line.json" && cat "$line/packages" 2>/dev/null >/dev/null && mkdir -p "Packages" && ln -sr "All Apps/$line.json" "Packages/$line.json" #link to them
+	if cat "../../status/$line" | grep -v uninstalled | grep .;then
+		mkdir -p  Installed
+		ln -sr "All Apps/$line.json" "Installed/$line.json"
+	fi
+	if  [ ! -f "$directory/icon.png" ];then
+		if [ -f "../icons/categories/$directory-64.png" ];then
+			cp "../icons/categories/$directory-64.png" "$directory/icon.png"
+		else
+			cp "../icons/categories/default-64.png" "$directory/icon.png"
+		fi
+	fi
+	
+	# mv "./$line" "$directory" 2>/dev/null
+done
+#
+directory="All Apps"
+if ! [ -f "$directory/icon.png" ];then
+		if [ -f "../icons/categories/$directory-64.png" ];then
+			cp "../icons/categories/$directory-64.png" "$directory/icon.png" 2>/dev/null
+		else
+			cp "../icons/categories/default-64.png" "$directory/icon.png" 2>/dev/null
+		fi
+fi
+directory="Packages"
+if ! [ -f "$directory/icon.png" ];then
+		if [ -f "../icons/categories/$directory-64.png" ];then
+			cp "../icons/categories/$directory-64.png" "$directory/icon.png" 2>/dev/null
+		else
+			cp "../icons/categories/default-64.png" "$directory/icon.png" 2>/dev/null
+		fi
+fi
+
+cd ..
+mv apps preload
+rm -r preload/hidden
+mkdir -p apps
+cat applist | while read line; do mv "preload/$line" ./apps;done
+cd ..
+echo 'Downloading some components...'
+wget -qO- "https://raw.githubusercontent.com/Botspot/pi-apps/master/manage">manage
+rm api
+wget -qO- "https://raw.githubusercontent.com/Botspot/pi-apps/master/api">api
+chmod +x manage
+chmod +x api
+rm -r apps
+rm -r preload
+cp -r ./update/* .
+rm -r update
+echo
+cd apps
+
