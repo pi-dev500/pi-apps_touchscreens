@@ -1,0 +1,17 @@
+OS: Debian GNU/Linux 11 (bullseye)
+OS architecture: 64-bit
+Last updated Pi-Apps on: 09/27/2022
+Kernel: aarch64 5.15.61-v8+
+Device model: Raspberry Pi 4 Model B Rev 1.2
+Cpu name: Cortex-A72
+Ram size: 3.79 GB
+Raspberry Pi OS image version: 2022-04-04
+Language: en_US.UTF-8
+
+BEGINNING OF LOG FILE:
+-----------------------
+
+Downloading libreoffice-ms-theme repository... Done
+Warning: backup file already exists. Not overwriting it.
+/home/pi-dev500/.config/libreoffice/4/user/registrymodifications.xcu.bak
+Libreoffice should now have a new look and feel. Try it out! :)

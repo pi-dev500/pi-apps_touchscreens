@@ -30,14 +30,16 @@ status_green() { #announce the success of a major action
 }
 
 generate_logo() { #display colorized Pi-Apps logo in terminal
-  #generate pi-apps logo
-  #https://misc.flogisoft.com/bash/tip_colors_and_formatting
+  #ANSI color codes: https://misc.flogisoft.com/bash/tip_colors_and_formatting
+  #Search for unicode characters: https://unicode-search.net - search for "block" and "quadrant"
+  
   # foreground colors
   blue='\e[38;5;21m' #blue='\e[38;5;27m' #lighter
   green='\e[38;5;46m'
   darkgreen='\e[38;5;34m'
   red='\e[38;5;197m'
   white='\e[97m'
+  black='\e[30m'
   default='\e[39m'
   # background colors
   bg_default='\e[49m'
@@ -47,21 +49,23 @@ generate_logo() { #display colorized Pi-Apps logo in terminal
   #use simpler logo if OS is Buster or lower - to fix issue https://github.com/Botspot/pi-apps/issues/1441
   local version_id="$(grep 'VERSION_ID=' /etc/os-release | tr -cd '0123456789.')"
   if [[ "$version_id" != *\.* ]] && [ "$version_id" -ge 11 ];then
-    echo -e "${white}${bg_default}    ${green}🭊${darkgreen}▅▅▅▅${green}🬿
- ${blue}🭈▂▂${green}█${blue}▂▂▂▂${green}█${blue}▂▂🬽${white}
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▀▀🭍 ▄
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▄▄🭞 ▄ ${blue}▄▄${default} 🭂▀▀█ █▀▀🭍 █▀▀🭍 🭂🬰🬰🬰
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █    █    🭓▄▄█ █▄▄🭞 █▄▄🭞 ▄▄▄🭞
- ${blue}🭓${bg_white}🬭🬭🬰🬰🬰🬰🬰🬰🬭🬭${bg_default}🭞${default}                  █    █
-\e[0m\e[0m"
+    echo -e "${bg_default}    ${green}🭊${darkgreen}▅▅▅▅${green}🬿${default}                                          ${darkgreen}                ${default}
+ ${blue}🭇🬭🬭${green}█${blue}🬭🬭🬭🬭${green}█${blue}🬭🬭🬼${default}                                       ${darkgreen}                ${default}
+ ${blue}🮉${bg_white}  ${black}${bg_white}🬞🬭🬭🬭🬭🬏${blue}  ${bg_default}▋${default}   █▀▀🭍 ▄                              ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${blue}🮉${bg_white}  ${black}${bg_white}▐${red}${bg_black}🬰🬠🬐🬰${black}${bg_white}▌${bg_white}${blue}  ${bg_default}▋${default}   █▄▄🭞 ▄ ${blue}▄▄${default} 🭂▀▀█ █▀▀🭍 █▀▀🭍 🭂🬰🬰🬰       ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${blue}🮉${bg_white}  ${black}${bg_white}▐${red}${bg_black}🬋🬇🬃🬋${black}${bg_white}▌${bg_white}${blue}  ${bg_default}▋${default}   █    █    🭓▄▄█ █▄▄🭞 █▄▄🭞 ▄▄▄🭞       ${darkgreen}      ${black}    ${darkgreen}      ${default}
+ ${blue}🭦${bg_white}🭏🬭🬭🬭🬭🬭🬭🬭🬭🭄${bg_default}🭛${default}                  █    █               ${darkgreen}    ${black}        ${darkgreen}    ${default}
+\e[0m                                                    ${darkgreen}    ${black}        ${darkgreen}    ${default}
+                                                    ${darkgreen}    ${black}  ${darkgreen}    ${black}  ${darkgreen}    ${default}"
   else
-    echo -e "${white}${bg_default}    ${green}▅${darkgreen}▅▅▅▅${green}▅
- ${blue}▂▂▂${green}█${blue}▂▂▂▂${green}█${blue}▂▂▂${white}
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▀▀▆ ▄
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▄▄\e[7m▂\e[27m ▄ ${blue}▄▄${default} ▆▀▀█ █▀▀▆ █▀▀▆ ▆\e[7m━━━\e[27m
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █    █    \e[7m▂\e[27m▄▄█ █▄▄\e[7m▂\e[27m █▄▄\e[7m▂\e[27m ▄▄▄\e[7m▂\e[27m
- ${blue}${bg_default}\e[7m▂\e[27m${bg_white}▃▃▃▃▃▃▃▃▃▃${bg_default}\e[7m▂\e[27m${default}                  █    █
-\e[0m\e[0m"
+    echo -e "${white}${bg_default}    ${green}▅${darkgreen}▅▅▅▅${green}▅${default}                                          ${darkgreen}                ${default}
+ ${blue}▂▂▂${green}█${blue}▂▂▂▂${green}█${blue}▂▂▂${white}${default}                                       ${darkgreen}                ${default}
+ ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▀▀▆ ▄                              ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▄▄\e[7m▂\e[27m ▄ ${blue}▄▄${default} ▆▀▀█ █▀▀▆ █▀▀▆ ▆\e[7m━━━\e[27m       ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █    █    \e[7m▂\e[27m▄▄█ █▄▄\e[7m▂\e[27m █▄▄\e[7m▂\e[27m ▄▄▄\e[7m▂\e[27m       ${darkgreen}      ${black}    ${darkgreen}      ${default}
+ ${blue}${bg_default}\e[7m▂\e[27m${bg_white}▃▃▃▃▃▃▃▃▃▃${bg_default}\e[7m▂\e[27m${default}                  █    █               ${darkgreen}    ${black}        ${darkgreen}    ${default}
+\e[0m                                                    ${darkgreen}    ${black}        ${darkgreen}    ${default}
+                                                    ${darkgreen}    ${black}  ${darkgreen}    ${black}  ${darkgreen}    ${default}"
   fi
 }
 #end of output functions
@@ -463,7 +467,8 @@ Depends: $depends
 Package: $package_name" > ~/$package_name/DEBIAN/control
     
     #fix error report "dpkg-deb: error: control directory has bad permissions 700 (must be >=0755 and <=0775)"
-    sudo chmod -R '0755' ~/$package_name
+    #The two zeros fix error report "dpkg-deb: error: control directory has bad permissions 2755 (must be >=0755 and <=0775)"
+    sudo chmod -R '00755' ~/$package_name
     
     #display the finished "Depends: " line to the user
     grep --color=never "^Depends: " ~/$package_name/DEBIAN/control
@@ -852,47 +857,45 @@ app_prefix_category() { #lists all apps in a category with format "category/app"
   fi
 }
 
-#reverted to use bitly again due to hosting issues
-bitly_link() { #Runs whenever an app is installed/uninstalled to tally the number of users for each app
-  #This cannot possibly be used to identify you, or any information about you.
-  #It simply "clicks" a bitly link - a shortened URL - so that the total number of clicks can be tallied to determine how popular a certain app is.
-  app="$1"
-  trigger="$2"
-  
-  [ -z "$app" ] && error "bitly_link(): requires an app argument"
-  [ -z "$trigger" ] && error "bitly_link(): requires a trigger argument"
-  
-  #if the 'Enable Analytics' setting is enabled
-  if [ "$(cat "${DIRECTORY}/data/settings/Enable analytics")" == 'Yes' ];then
-    #determine the name of the link to "click"
-    bitlylink="https://bit.ly/pi-apps-$trigger-$(echo "$app" | tr -d ' ' | sed 's/[^a-zA-Z0-9]//g')"
-    #click it
-    curl -L --user-agent "Pi-Apps Raspberry Pi app store" "$bitlylink" &>/dev/null &
-  fi
-}
-
-# temporarily disable shlink until a new domain can be made for the pi-apps shlink server
-shlink_link() { #compatibility function pointing to bitly_link (incase old manage script is running with new api)
-  bitly_link "$@"
-}
-
-# shlink_link() { #Runs whenever an app is installed/uninstalled to tally the number of users for each app
+# bitly_link() { #Runs whenever an app is installed/uninstalled to tally the number of users for each app
 #   #This cannot possibly be used to identify you, or any information about you.
-#   #It simply "clicks" a shlink link - a shortened URL - so that the total number of clicks can be tallied to determine how popular a certain app is.
+#   #It simply "clicks" a bitly link - a shortened URL - so that the total number of clicks can be tallied to determine how popular a certain app is.
 #   app="$1"
 #   trigger="$2"
   
-#   [ -z "$app" ] && error "shlink_link(): requires an app argument"
-#   [ -z "$trigger" ] && error "shlink_link(): requires a trigger argument"
+#   [ -z "$app" ] && error "bitly_link(): requires an app argument"
+#   [ -z "$trigger" ] && error "bitly_link(): requires a trigger argument"
   
 #   #if the 'Enable Analytics' setting is enabled
 #   if [ "$(cat "${DIRECTORY}/data/settings/Enable analytics")" == 'Yes' ];then
 #     #determine the name of the link to "click"
-#     shlinklink="https://pi-apps-analytics.linkpc.net/pi-apps-$trigger-$(echo "$app" | tr -d ' ' | sed 's/[^a-zA-Z0-9]//g')/track"
+#     bitlylink="https://bit.ly/pi-apps-$trigger-$(echo "$app" | tr -d ' ' | sed 's/[^a-zA-Z0-9]//g')"
 #     #click it
-#     curl -s -X 'GET' "$shlinklink" -H 'accept: image/gif' -A "Pi-Apps Raspberry Pi app store" >/dev/null &
+#     curl -L --user-agent "Pi-Apps Raspberry Pi app store" "$bitlylink" &>/dev/null &
 #   fi
 # }
+
+bitly_link() { #compatibility function pointing to shlink_link (incase old manage script is running with new api)
+  shlink_link "$@"
+}
+
+shlink_link() { #Runs whenever an app is installed/uninstalled to tally the number of users for each app
+  #This cannot possibly be used to identify you, or any information about you.
+  #It simply "clicks" a shlink link - a shortened URL - so that the total number of clicks can be tallied to determine how popular a certain app is.
+  app="$1"
+  trigger="$2"
+  
+  [ -z "$app" ] && error "shlink_link(): requires an app argument"
+  [ -z "$trigger" ] && error "shlink_link(): requires a trigger argument"
+  
+  #if the 'Enable Analytics' setting is enabled
+  if [ "$(cat "${DIRECTORY}/data/settings/Enable analytics")" == 'Yes' ];then
+    #determine the name of the link to "click"
+    shlinklink="https://pi-apps-analytics.linkpc.net/pi-apps-$trigger-$(echo "$app" | tr -d ' ' | sed 's/[^a-zA-Z0-9]//g')/track"
+    #click it
+    curl -s -X 'GET' "$shlinklink" -H 'accept: image/gif' -A "Pi-Apps Raspberry Pi app store" >/dev/null &
+  fi
+}
 
 usercount() { #Return number of users for specified app. $1 is app name. If empty, all are shown.
   #If clicklist file missing or over a day old, download it.

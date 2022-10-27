@@ -1,26 +1,25 @@
 #!/bin/bash
 #This file create and manage queue
 DIR="$(dirname "$(realpath "$0")")"
-
-function background {
-while true;do
-	if [ -f "/tmp/pi-apps_queue" ];then
-		cat "/tmp/pi-apps_queue" | while read line;do
-			app="$(echo "$line" | awk 'BEGIN {FS=":"} {print $2}')"
-			echo app:"$app"
-			action="$(echo "$line" | awk 'BEGIN {FS=":"} {print $1}')"
-			echo action:"$action"
-			sed -i 's/$action/$actioning/g' /tmp/pi-apps_queue
-			"$DIR/manage" "$action" "$app" && sed -i "s/$actioning/$actioned/g" /tmp/pi-apps_queue 
+function managing {
+	act="$1"
+	printf "$1ing " && shift && echo $@
+	app=$1
+	shift
+	until [ "$1" == "" ];do
+		app="$app $1"
+		shift
+	done
+	"$DIR/manage" "$act" "$app" && echo "$acted" >"$DIR/status/$app"
+	if [ $? != 0 ];then
+		echo "corrupted">"$DIR/status/$app"
+	fi
+}
+while read line;do
+	if echo "$line" | grep "install" >/dev/null;then
+			managing $line
 			#|| message fail "Failled to $action $app" && sed -i "s/$actioning/corrupted/g" /tmp/pi-apps_queue
-			
-		done
-		sleep 1
+	elif [ "$line" == "exit" ];then
+			exit
 	fi
 done
-}
-
-function manage {
-	echo "$1:$2" >> /tmp/pi-apps_queue
-}
-"$1" "$2" "$3"

@@ -1,5 +1,0 @@
-#!/bin/bash
-
-flatpak_uninstall io.github.peazip.PeaZip || exit 1
-
-purge_packages || exit 1

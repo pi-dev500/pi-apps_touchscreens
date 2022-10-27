@@ -136,8 +136,8 @@ class PiMenu(Frame):
         #App label, status and icon + back button
         #get the icon for app label
         icon = self.get_icon(item['icon'])
-        print('App Details\n')
-        print(item['name'] + "\n" + item['status'] + "\n")
+        print('Status Message:App Details\n')
+        print("Status Message:" + item['name'])# + "\n" + item['status'] + "\n")
         app_label_frame=Frame(app_details_frame, bg=self.bg)
         
         #back button
@@ -151,28 +151,32 @@ class PiMenu(Frame):
         app_label.pack(side='left')#grid(column=1,row=0)
         app_label_frame.pack(anchor='nw',fill='x')
         app_label.bind('<1>', gotowebsite)
-        print(item['website'] + "\n")
+        print("Status Message:" + item['website'] + "\n")
         
         # app managing buttons
+        def install():
+            print("install " + item['name'])
+        def uninstall():
+            print("uninstall " + item['name'])
         manage_buttons_frame=Frame(app_label_frame)
         manage_buttons_frame.config(width=100)
         if item['status'] == '(uninstalled)':
-            install_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/install.png'), text=" Install... ")
+            install_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/install.png'), text=" Install... ",command=install)
             install_btn.set_color('green')
             install_btn.pack(side='right',fill='both',expand=1)
             btn_place=self.winfo_width()
         if item['status'] == '(installed)':
-            uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...")
+            uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...",command=uninstall)
             uninstall_btn.set_color('red')
             uninstall_btn.pack(side='right',fill='both',expand=1)
             btn_place=self.winfo_width()
         if item['status'] == '(corrupted)':
             manage_buttons_frame.config(width=200)
-            uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...")
+            uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...",command=uninstall)
             uninstall_btn.set_color('red')
             uninstall_btn.pack(side='right',fill='both',expand=1)
             btn_place=self.winfo_width()
-            install_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/install.png'), text=" Install... ")
+            install_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/install.png'), text=" Install... ",command=uninstall)
             install_btn.set_color('green')
             install_btn.pack(side='right',fill='both',expand=1)
             btn_place=self.winfo_width()
@@ -185,7 +189,7 @@ class PiMenu(Frame):
         textframe.pack(side="left", fill=TkC.BOTH,expand=1)
         text=""
         for i in description:
-            print(i)
+            print("Description Message: " + i)
             text=text + "\n" + i
         description=Text(textframe, wrap = WORD)
         description.pack(fill=TkC.BOTH,expand=1)
@@ -193,7 +197,6 @@ class PiMenu(Frame):
         description['state'] = 'disabled'
         
         #End of description script
-            
         app_details_frame.pack(fill=TkC.BOTH,expand=1) # affichage
         
     def has_config_changed(self):
@@ -368,6 +371,10 @@ class PiMenu(Frame):
             self.destroy_top()
             self.show_top()
 
+def quit_pi_apps():
+    print("exit")
+    quit()
+    
 
 def main():
     root = Tk()
@@ -385,7 +392,7 @@ def main():
     pi_apps_btn.set_color(pabc)
     pi_apps_btn.pack()
     close_btn_image=PhotoImage(file=os.path.dirname(os.path.realpath(sys.argv[0])) + "/ico/close.png")
-    close_btn=SimpleFlatButton(btn_frame,text="Close", image=close_btn_image, command=quit )
+    close_btn=SimpleFlatButton(btn_frame,text="Close", image=close_btn_image, command=quit_pi_apps )
     close_btn.set_color(pabc)
     btn_frame.update()
     #When tkhtml will work 

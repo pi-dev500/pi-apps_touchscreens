@@ -17,7 +17,7 @@ echo "ARCHITECTURE: arm$ARCH"
 if ! svn help >/dev/null;then
 	echo "Installing svn..."
 	sudo apt update
-	sudo apt install subversion -y | exit
+	sudo apt install subversion -y || exit
 fi
 echo "Downloading apps..."
 svn checkout https://github.com/botspot/pi-apps/trunk/apps/ | awk 'BEGIN {FS="/" } { print $2 }' | while read line; do printf "\r$line                         ";done
