@@ -6,10 +6,10 @@ developed with a Raspberry Pi Touchscreen in mind and is optimized for small
 screens (320x240 is assumed).
 
 The design is inspired by Windows 8's Metro design. Tiles are configured in
-```pimenu.yaml```, they can either open new pages of tiles or execute the action
+```../tmp.json```, they can either open new pages of tiles or execute the action
 script ```pimenu.sh``` to execute arbitrary tasks.
 
-On the Raspberry, install python-yaml:
+On the Raspberry, install python-json:
 
     sudo apt-get install python-yaml
 
@@ -18,7 +18,7 @@ Copy the example configs before running the script:
     cp pimenu.yaml{.dist,}
     cp pimenu.sh{.dist,}
 
-The app can be started in fullscreen by passing ```fs``` as first parameter.
+The app can be started in fullscreen by passing ```fs``` as second parameter.
 
     ./pimenu.py fs
 
@@ -46,16 +46,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-Icons
------
-
-The install comes wih a bunch of icons with their own licenses as listed below:
-
-* bunny.gif     CC-by   http://thenounproject.com/term/rabbit/26062/
-* invoice.gif   CC-by   http://thenounproject.com/term/invoice/60884/
-* ambulance.gif PD      http://thenounproject.com/term/ambulance/597/
-* medical.gif   CC-by   http://thenounproject.com/term/medical/35773/
-* grave.gif     CC-by   http://thenounproject.com/term/grave/29403/
-* fish.gif      CC-by   http://thenounproject.com/term/fish/19775/
-* all others    CC-by   http://modernuiicons.com/
