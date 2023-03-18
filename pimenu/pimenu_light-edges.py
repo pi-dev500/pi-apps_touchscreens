@@ -8,13 +8,18 @@ from tkinter import *
 from math import sqrt, floor, ceil
 #from tkinterhtml import HtmlFrame as HTMLLabel #import the HTML browser #HtmlLabel as
 import json
-import webbrowser
-
+#import webbrowser
+from terminal import Terminal
 from tkinter import (
         constants as TkC,
 )
+try:
+    from tkhtmlview import HTMLLabel
+except ImportError:
+    os.system("pkexec pip3 install tkhtmlview")
+    
 def pi_apps_mainpage():
-    os.system("x-www-browser https://github.com/botspot/pi-apps >/dev/null &")
+    os.system("nohup x-www-browser https://pi-apps.io &>/dev/null &")
     quit()
 class SimpleFlatButton(Button):
     def __init__(self, master=None, cnf=None, **kw):
@@ -39,7 +44,7 @@ class SimpleFlatButton(Button):
             activeforeground="white"
         )
         
-def colorscale(self, hexstr, scalefactor):
+def colorscale(hexstr, scalefactor):
     #pylint: disable=unused-argument
     hexstr = hexstr.strip('#')
 
@@ -71,19 +76,19 @@ class FlatButton(Button):
             bd=0,
             bg="#b91d47",  # dark-red
             fg="white",
-            activebackground=colorscale(self, "#b91d47", 30),  # dark-red
+            activebackground=colorscale("#b91d47", 30),  # dark-red
             activeforeground="white",
             highlightthickness=2,
-            highlightbackground=colorscale(self, "#b91d47", 60)
+            highlightbackground=colorscale("#b91d47", 60)
         )
 
     def set_color(self, color):
         self.configure(
             bg=color,
             fg="white",
-            activebackground=colorscale(self, color, 30),
+            activebackground=colorscale(color, 30),
             activeforeground="white",
-            highlightbackground=colorscale(self, color, 60)
+            highlightbackground=colorscale(color, 60)
         )
 
 class PiMenu(Frame):
@@ -100,7 +105,9 @@ class PiMenu(Frame):
 
         self.path = os.path.dirname(os.path.realpath(sys.argv[0]))
         self.initialize()
-
+    def reinit(self):
+        self.destroy_all()
+        self.initialize()
     def initialize(self):
         """
         (re)load the the items from the json configuration and (re)init
@@ -121,6 +128,7 @@ class PiMenu(Frame):
            self.load_app(doc[1])
         else:
             self.show_items(doc)
+        self.bind("<Configure>",lambda x: self.reinit())
     def load_app(self,item):
         app_details_frame = Frame(self,bg=self.bg)
         #functions
@@ -147,7 +155,7 @@ class PiMenu(Frame):
         back_button.pack(side='left')
         
         #display label
-        app_label = Label(app_label_frame, text= item['name'] + "\n" + item['status'] + "\n" + item['website'], font="Helvetica 12", anchor='nw', justify='left', image=icon,compound='left', bg=self.bg)
+        app_label = Label(app_label_frame,fg="white", text= item['name'] + "\n" + item['status'] + "\n" + item['website'], font="Helvetica 12", anchor='nw', justify='left', image=icon,compound='left', bg=self.bg)
         app_label.pack(side='left')#grid(column=1,row=0)
         app_label_frame.pack(anchor='nw',fill='x')
         app_label.bind('<1>', gotowebsite)
@@ -164,22 +172,22 @@ class PiMenu(Frame):
             install_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/install.png'), text=" Install... ",command=install)
             install_btn.set_color('green')
             install_btn.pack(side='right',fill='both',expand=1)
-            btn_place=self.winfo_width()
+            #btn_place=self.winfo_width()
         if item['status'] == '(installed)':
             uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...",command=uninstall)
             uninstall_btn.set_color('red')
             uninstall_btn.pack(side='right',fill='both',expand=1)
-            btn_place=self.winfo_width()
+            #btn_place=self.winfo_width()
         if item['status'] == '(corrupted)':
             manage_buttons_frame.config(width=200)
             uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...",command=uninstall)
             uninstall_btn.set_color('red')
             uninstall_btn.pack(side='right',fill='both',expand=1)
-            btn_place=self.winfo_width()
+            #btn_place=self.winfo_width()
             install_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/install.png'), text=" Install... ",command=uninstall)
             install_btn.set_color('green')
             install_btn.pack(side='right',fill='both',expand=1)
-            btn_place=self.winfo_width()
+            #btn_place=self.winfo_width()
         manage_buttons_frame.pack(side='right', fill='y')
         
         #Description
@@ -221,7 +229,7 @@ class PiMenu(Frame):
         
         # create a new frame
         wrap = Frame(self, bg=self.bg)
-
+        
         if len(self.framestack):
             # when there were previous frames, hide the top one and add a back button for the new one
             self.hide_top()
@@ -238,11 +246,18 @@ class PiMenu(Frame):
         # add the new frame to the stack and display it
         self.framestack.append(wrap)
         self.show_top()
-
+        self.pack(expand=True,fill="both")
+        maxitems=round(self.master.winfo_width()/200)*round(self.master.winfo_height()/150)
+        os.system("echo " + str(maxitems) + " >/dev/stderr")
         # calculate tile distribution
         allitems = len(items) + num
-        rows = floor(sqrt(allitems))
-        cols = ceil(allitems / rows)
+        if len(items) > maxitems:
+            cols=round(self.master.winfo_width()/200)
+            rows=round(self.master.winfo_height()/150)
+            items=items[0:maxitems-1]
+        else:
+            rows = floor(sqrt(allitems))
+            cols = ceil(allitems / rows)
 
         # make cells autoscale
         for x in range(int(cols)):
@@ -286,6 +301,7 @@ class PiMenu(Frame):
                 sticky=TkC.W + TkC.E + TkC.N + TkC.S
             )
             num += 1
+        #wrap.bind("<Configure>",lambda x: self.reinit())
 
     def get_icon(self, name):
         """
@@ -350,13 +366,11 @@ class PiMenu(Frame):
         #label.pack(fill=TkC.BOTH, expand=1)
         self.parent.update()
 
-        # excute shell script
+        # excute shell script (create the menu)
         subprocess.call([self.path + '/pimenu.sh'] + actions)
 
-        # remove delay screen and show menu again
-        #delay.destroy()
+        # show menu again
         self.destroy_all()
-        #quit
         self.initialize()
 
     def go_back(self):
@@ -371,6 +385,7 @@ class PiMenu(Frame):
             self.destroy_top()
             self.show_top()
 
+
 def quit_pi_apps():
     print("exit")
     quit()
@@ -381,31 +396,62 @@ def main():
     root.geometry("640x480")
     root.wm_title('PiMenu')
     root.attributes('-alpha',0.0)
+    root.protocol("WM_DELETE_WINDOW", lambda: quit_pi_apps())
     pabcf = open(os.path.dirname(os.path.realpath(sys.argv[0])) + "/settings/Pi_apps_button_color")
     pabc = pabcf.read()
 
     if len(sys.argv) > 2 and sys.argv[2] == 'fs':
         root.wm_attributes('-fullscreen', True)
-    btn_frame = Frame(root, bg=pabc)
-    img = PhotoImage(file=os.path.dirname(os.path.dirname(os.path.realpath(sys.argv[0]))) + "/icons/proglogo.png")
-    pi_apps_btn = SimpleFlatButton(btn_frame, image=img, command=pi_apps_mainpage, text=sys.argv[1])#
+    btn_frame = Frame(root, bg=pabc, height=120)
+    img = PhotoImage(file=os.path.dirname(os.path.realpath(sys.argv[0])) + "/ico/proglogo.png")
+    pi_apps_btn = SimpleFlatButton(btn_frame, image=img, command=pi_apps_mainpage)#
     pi_apps_btn.set_color(pabc)
     pi_apps_btn.pack()
     close_btn_image=PhotoImage(file=os.path.dirname(os.path.realpath(sys.argv[0])) + "/ico/close.png")
     close_btn=SimpleFlatButton(btn_frame,text="Close", image=close_btn_image, command=quit_pi_apps )
     close_btn.set_color(pabc)
     btn_frame.update()
-    #When tkhtml will work 
-    #Tips = HTMLLabel(btn_frame, text=sys.argv[1])
-    #Tips.pack()
+
+    tips_secure=Frame(btn_frame, height=30, bg=pabc)
+    tips_secure.pack(fill='x',expand=True)
+    tips_secure.pack_propagate(False)
+    Tips = HTMLLabel(tips_secure, background=pabc, html="<div style='text-align: center;'><h6 style=\"color:White\">"+sys.argv[1]+"</h6></div>")
+    Tips.configure(highlightthickness=0)
+    Tips.pack(expand=True, fill='x', side='left')
     piframe = Frame(root, bg=pabc)
     btn_frame.pack(padx=1,pady=1, fill=TkC.BOTH)
     btn_frame.update()
-    
+    tabs_frame=Frame(root, bg=pabc)
+    tabs_frame.pack(fill="both")
+    tab_pimenu=FlatButton(tabs_frame, text="Apps Menu")
+    tab_pimenu.set_color(pabc)
+    tab_terminal=FlatButton(tabs_frame, text="Terminal")
+    tab_terminal.set_color(pabc)
+    tab_pimenu.pack(side="left",expand=True,fill='both')
+    tab_terminal.pack(side="left",expand=True,fill='both')
     os.system(os.path.dirname(os.path.realpath(sys.argv[0])) + '/updateyaml reset')
-    close_btn.place(x = btn_frame.winfo_width() - 96 , y = 0)
+    close_btn.place(anchor = "ne", relx = 1.0 , rely = 0)
     piframe.pack(fill=TkC.BOTH, expand=1)
-    PiMenu(piframe,pabc)
+    terminal=Terminal(piframe)
+    terminal.display_false()
+    pimenu=PiMenu(piframe,pabc)
+    def tabswitch(tab):
+        if tab==2:
+            pimenu.pack_forget()
+            terminal.display_true()
+            tab_pimenu.set_color(pabc)
+            tab_terminal.set_color(colorscale(pabc, 60))
+            tab_terminal.configure(activebackground=colorscale(pabc, 60))
+        else:
+            terminal.display_false()
+            pimenu.pack(expand=True, fill='both')
+            tab_pimenu.set_color(colorscale(pabc, 60))
+            tab_terminal.set_color(pabc)
+            tab_pimenu.configure(activebackground=colorscale(pabc, 60))
+    tab_pimenu.configure(command=lambda: tabswitch(1))
+    tab_terminal.configure(command=lambda: tabswitch(2))
+    tabswitch(1)
+    #pimenu.pack_forget()
     root.mainloop()
     #btn_frame.winfo_width()
 

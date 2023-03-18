@@ -76,7 +76,14 @@ if ! [ -f "$directory/icon.png" ];then
 			cp "../icons/categories/default-64.png" "$directory/icon.png" 2>/dev/null
 		fi
 fi
-
+directory="Installed"
+if ! [ -f "$directory/icon.png" ];then
+		if [ -f "../icons/categories/$directory-64.png" ];then
+			cp "../icons/categories/$directory-64.png" "$directory/icon.png" 2>/dev/null
+		else
+			cp "../icons/categories/default-64.png" "$directory/icon.png" 2>/dev/null
+		fi
+fi
 cd ..
 mv apps preload
 rm -r preload/hidden

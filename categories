@@ -73,6 +73,7 @@ Geekbench|Tools
 GIMP|Creative Arts
 Github-CLI|Programming
 Github Desktop|Programming
+Gnome Builder IDE|Programming
 Godot|Games
 GParted|System Management
 Guake Terminal|Terminals
@@ -97,7 +98,7 @@ LineRider|Games
 LinuxCNC|Engineering
 Linux Wifi Hotspot|Tools
 LMMS|Multimedia
-Lokinet|Internet
+Lokinet|hidden
 Mac OS Theme|Appearance
 Marathon|Games
 MatterControl|Engineering
@@ -139,6 +140,7 @@ piKiss|Tools
 Pinta|Creative Arts
 Pi Power Tools|System Management
 PiSafe|Tools
+Pixelorama|Creative Arts
 Powerline-Shell|Appearance
 PPSSPP (PSP emulator)|Games
 Processing IDE|Programming
@@ -166,7 +168,7 @@ Sonic Pi|Multimedia
 SpeedTest-CLI|Internet
 Sphero SDK|Programming
 StackEdit|Programming
-Steam|Games
+Steam|hidden
 Steam Link|Games
 StepMania|Games
 Stunt Rally|Games

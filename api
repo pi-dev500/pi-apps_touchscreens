@@ -34,7 +34,11 @@ generate_logo() { #display colorized Pi-Apps logo in terminal
   #Search for unicode characters: https://unicode-search.net - search for "block" and "quadrant"
   
   # foreground colors
-  blue='\e[38;5;21m' #blue='\e[38;5;27m' #lighter
+  blue1='\e[38;5;75m'
+  blue2='\e[38;5;26m'
+  blue3='\e[38;5;21m'
+  blue4='\e[38;5;93m'
+  
   green='\e[38;5;46m'
   darkgreen='\e[38;5;34m'
   red='\e[38;5;197m'
@@ -49,23 +53,23 @@ generate_logo() { #display colorized Pi-Apps logo in terminal
   #use simpler logo if OS is Buster or lower - to fix issue https://github.com/Botspot/pi-apps/issues/1441
   local version_id="$(grep 'VERSION_ID=' /etc/os-release | tr -cd '0123456789.')"
   if [[ "$version_id" != *\.* ]] && [ "$version_id" -ge 11 ];then
-    echo -e "${bg_default}    ${green}🭊${darkgreen}▅▅▅▅${green}🬿${default}                                          ${darkgreen}                ${default}
- ${blue}🭇🬭🬭${green}█${blue}🬭🬭🬭🬭${green}█${blue}🬭🬭🬼${default}                                       ${darkgreen}                ${default}
- ${blue}🮉${bg_white}  ${black}${bg_white}🬞🬭🬭🬭🬭🬏${blue}  ${bg_default}▋${default}   █▀▀🭍 ▄                              ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
- ${blue}🮉${bg_white}  ${black}${bg_white}▐${red}${bg_black}🬰🬠🬐🬰${black}${bg_white}▌${bg_white}${blue}  ${bg_default}▋${default}   █▄▄🭞 ▄ ${blue}▄▄${default} 🭂▀▀█ █▀▀🭍 █▀▀🭍 🭂🬰🬰🬰       ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
- ${blue}🮉${bg_white}  ${black}${bg_white}▐${red}${bg_black}🬋🬇🬃🬋${black}${bg_white}▌${bg_white}${blue}  ${bg_default}▋${default}   █    █    🭓▄▄█ █▄▄🭞 █▄▄🭞 ▄▄▄🭞       ${darkgreen}      ${black}    ${darkgreen}      ${default}
- ${blue}🭦${bg_white}🭏🬭🬭🬭🬭🬭🬭🬭🬭🭄${bg_default}🭛${default}                  █    █               ${darkgreen}    ${black}        ${darkgreen}    ${default}
-\e[0m                                                    ${darkgreen}    ${black}        ${darkgreen}    ${default}
-                                                    ${darkgreen}    ${black}  ${darkgreen}    ${black}  ${darkgreen}    ${default}"
+    echo -e "${bg_default}    ${green}🭊${darkgreen}🬹🬹🬹${green}🬿${default}                                          ${darkgreen}                ${default}
+ ${blue1}🭇🬭🬭${green}\e[48;5;26m🬎${bg_default}${blue2}🬭🬭🬭${blue3}${green}\e[48;5;26m🬎${bg_default}${blue3}🬭🬭🬼${default}                                       ${darkgreen}                ${default}
+ ${blue1}🮉${bg_black}  ${red}▄ ▄ ▄${blue3}  ▋${default}   █▀▀🭍 ▄                              ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${blue2}🮉${bg_black}  ${red}▄ ▄ ▄${blue3}  ▋${default}   █▄▄🭞 ▄ ${blue3}▄▄${default} 🭂▀▀█ █▀▀🭍 █▀▀🭍 🭂🬰🬰🬰       ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${blue2}🮉${bg_black}  ${red}▄ ▄ ▄${blue4}  ▋${default}   █    █    🭓▄▄█ █▄▄🭞 █▄▄🭞 ▄▄▄🭞       ${darkgreen}      ${black}    ${darkgreen}      ${default}
+ ${blue3}🭦${bg_black}🭏🬭🬭🬭${blue4}🬭🬭🬭🬭🭄${bg_default}🭛${default}                  █    █               ${darkgreen}    ${black}        ${darkgreen}    ${default}
+\e[0m                                                   ${darkgreen}    ${black}        ${darkgreen}    ${default}
+                                                   ${darkgreen}    ${black}  ${darkgreen}    ${black}  ${darkgreen}    ${default}"
   else
-    echo -e "${white}${bg_default}    ${green}▅${darkgreen}▅▅▅▅${green}▅${default}                                          ${darkgreen}                ${default}
- ${blue}▂▂▂${green}█${blue}▂▂▂▂${green}█${blue}▂▂▂${white}${default}                                       ${darkgreen}                ${default}
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▀▀▆ ▄                              ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █▄▄\e[7m▂\e[27m ▄ ${blue}▄▄${default} ▆▀▀█ █▀▀▆ █▀▀▆ ▆\e[7m━━━\e[27m       ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
- ${bg_white}${blue}▌  ${red}${bg_black}▗▖▗▖▗▖${bg_white}${blue}  ▐${default}${bg_default}   █    █    \e[7m▂\e[27m▄▄█ █▄▄\e[7m▂\e[27m █▄▄\e[7m▂\e[27m ▄▄▄\e[7m▂\e[27m       ${darkgreen}      ${black}    ${darkgreen}      ${default}
- ${blue}${bg_default}\e[7m▂\e[27m${bg_white}▃▃▃▃▃▃▃▃▃▃${bg_default}\e[7m▂\e[27m${default}                  █    █               ${darkgreen}    ${black}        ${darkgreen}    ${default}
-\e[0m                                                    ${darkgreen}    ${black}        ${darkgreen}    ${default}
-                                                    ${darkgreen}    ${black}  ${darkgreen}    ${black}  ${darkgreen}    ${default}"
+    echo -e "${white}${bg_default}    ${green}▅${darkgreen}▅▅▅${green}▅${default}                                          ${darkgreen}                ${default}
+ ${blue1}▂▂▂${green}\e[48;5;26m\e[7m▂\e[27m${bg_default}${blue2}▂▂▂${blue3}${green}\e[48;5;26m\e[7m▂\e[27m${bg_default}${blue3}▂▂▂${white}${default}                                       ${darkgreen}                ${default}
+ ${blue1}▌  ${red}▄ ▄ ▄${blue3}  ▐${default}   █▀▀▆ ▄                              ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${blue2}▌  ${red}▄ ▄ ▄${blue3}  ▐${default}   █▄▄\e[7m▂\e[27m ▄ ${blue3}▄▄${default} ▆▀▀█ █▀▀▆ █▀▀▆ ▆\e[7m━━━\e[27m       ${darkgreen}  ${black}    ${darkgreen}    ${black}    ${darkgreen}  ${default}
+ ${blue2}▌  ${red}▄ ▄ ▄${blue4}  ▐${default}   █    █    \e[7m▂\e[27m▄▄█ █▄▄\e[7m▂\e[27m █▄▄\e[7m▂\e[27m ▄▄▄\e[7m▂\e[27m       ${darkgreen}      ${black}    ${darkgreen}      ${default}
+ ${blue3}${bg_default}\e[7m▂\e[27m${bg_black}▃▃▃▃${blue4}▃▃▃▃▃${bg_default}\e[7m▂\e[27m${default}                  █    █               ${darkgreen}    ${black}        ${darkgreen}    ${default}
+\e[0m                                                   ${darkgreen}    ${black}        ${darkgreen}    ${default}
+                                                   ${darkgreen}    ${black}  ${darkgreen}    ${black}  ${darkgreen}    ${default}"
   fi
 }
 #end of output functions
@@ -109,7 +113,10 @@ package_available() { #determine if the specified package-name exists in a repos
   local package="$1"
   [ -z "$package" ] && error "package_available(): no package name specified!"
   #using find and grep to do this is nearly instantaneous, rather than apt-cache which takes several seconds
-  find /var/lib/apt/lists -maxdepth 1 -name "*_Packages" | xargs grep -q "^Package: $package$"
+  local IFS=$'\n'
+  for file in $(find /var/lib/apt/lists -maxdepth 1 -type f -name "*_Packages") ;do
+    grep -q "^Package: $package$" "$file" && break
+  done
 }
 
 package_dependencies() { #outputs the list of dependencies for the $1 package
@@ -122,9 +129,11 @@ package_dependencies() { #outputs the list of dependencies for the $1 package
 
 package_latest_version() { #returns the latest available versions of the specified package-name. Doesn't matter if it's installed or not.
   local package="$1"
-  [ -z "$package" ] && error "package_version(): no package specified!"
+  [ -z "$package" ] && error "package_latest_version(): no package specified!"
   
-  grep -rx "Package: $package" /var/lib/apt/lists --exclude="lock" --exclude-dir="partial" --after 4 | grep -o 'Version: .*' | awk '{print $2}' | sort -rV | head -n1
+  # use slower but more accurate apt list command to get package version for current architecture
+  apt list -a "$package" 2>/dev/null | grep "$(dpkg --print-architecture)" | awk '{print $2}' | sort -rV | head -n1
+  #grep -rx "Package: $package" /var/lib/apt/lists --exclude="lock" --exclude-dir="partial" --after 4 | grep -o 'Version: .*' | awk '{print $2}' | sort -rV | head -n1
 }
 
 package_is_new_enough() { #check if the $1 package has an available version greater than $2
@@ -192,8 +201,8 @@ remove_repofile_if_unused() { #Given a sources.list.d file, delete it if nothing
   local file="$1"
   local testmode="$2"
   [ -z "$file" ] && error "remove_repo_if_unused: no sources.list.d file specified!"
-  #exit now if the list file does not exist
-  [ -f "$file" ] || exit 0
+  #return now if the list file does not exist
+  [ -f "$file" ] || return 0
   
   #determine what repo-urls are in the file
   local urls="$(cat "$file" | grep -v '^#' | tr ' ' '\n' | grep '://')"
@@ -222,20 +231,30 @@ remove_repofile_if_unused() { #Given a sources.list.d file, delete it if nothing
 apt_lock_wait() { #Wait until other apt processes are finished before proceeding
   #make sure english locale is added first
   add_english
-  
-  #in a background subprocess, after 3 seconds, say "Waiting until APT locks are released... "
-  (sleep 3; echo -n "Waiting until APT locks are released... ") &
+
+  #check if sudo needs a password currently. this prevents sudo asking for a password in the below fuser command which would have "Waiting until APT locks are released... " written after it after 5 seconds
+  #the result would look like something in the terminal to a user "[sudo] password for USER: Waiting until APT locks are released... " which might be confusing
+  #this is very often the first command that pi-apps scripts run that requires sudo privileges from the user
+  #passwordless sudo (like on piOS) will always skip the contents of the if
+  if ! sudo -n true ; then
+    # sudo needs a password so prompt the user to give one before running other commands
+    sudo echo > /dev/null
+  fi
+
+  #in a background subprocess, after 5 seconds, say "Waiting until APT locks are released... "
+  (sleep 5; echo -n "Waiting until APT locks are released... ") &
   local pid=$!
+  
+  while [ ! -z "$(sudo fuser /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/log/unattended-upgrades/unattended-upgrades.log /var/lib/dpkg/lock-frontend 2>/dev/null)" ];do
+    sleep 1
+  done
   
   #Try to install a non-existent package to see if apt fails due to a lock-file. Repeat until no errors mention 'Could not get lock'
   while sudo -E apt install lkqecjhxwqekc 2>&1 | grep -q 'Could not get lock' ;do
     sleep 1
   done
-  while [ ! -z "$(sudo fuser /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/log/unattended-upgrades/unattended-upgrades.log /var/lib/dpkg/lock-frontend 2>/dev/null)" ];do
-    sleep 1
-  done
   
-  #If the background process finished, then that means the "waitint until" message was displayed. This means the kill command will return 1, so echo Done
+  #If the background process finished, then that means the "waiting until" message was displayed. This means the kill command will return 1, so echo Done
   kill $pid &>/dev/null || echo "Done"
 }
 
@@ -308,14 +327,25 @@ The Pi-Apps developers have been receiving a few of these errors recently, but w
   #by default, apt-ftparchive will generate lines like "Filename: ./package-name". This seemed to have caused one error-report, so we remove the "./" to hopefully solve the problem.
   sed -i 's+^Filename: \./+Filename: +g' /tmp/pi-apps-local-packages/Packages
   
+  # set repo origin name to pi-apps-local-packages - see PR #1986
+  echo 'APT::FTPArchive::Release {
+Origin "pi-apps-local-packages";
+};' > /tmp/pi-apps-local-packages/aptftp.conf
+  
   #hash the repository by creating a Release file
-  (cd /tmp/pi-apps-local-packages && apt-ftparchive release . > Release) || error "repo_update(): apt-ftparchive failed to hash the repository: /tmp/pi-apps-local-packages
+  (cd /tmp/pi-apps-local-packages && apt-ftparchive -c=/tmp/pi-apps-local-packages/aptftp.conf release . > Release) || error "repo_update(): apt-ftparchive failed to hash the repository: /tmp/pi-apps-local-packages
 The Pi-Apps developers have been receiving a few of these errors recently, but we can't figure out what the problem is without your help. Could you please reach out so we can solve this?"
   
   #create a source.list for the repository - add pi-apps-local-packages to the top, then add lines from /etc/apt/sources.list
   rm -f /tmp/pi-apps-local-packages/source.list
   echo "deb [trusted=yes] file:/tmp/pi-apps-local-packages/ ./" > /tmp/pi-apps-local-packages/source.list
   cat /etc/apt/sources.list >> /tmp/pi-apps-local-packages/source.list
+  
+  # add priority to all pi-apps-local-packages so that they always have higher priority than repo versions - see PR #1986
+  # this has no affect when there the pi-apps-local-packages repo does not exist
+  echo 'Package: *
+Pin: Release o=pi-apps-local-packages
+Pin-Priority: 990' | sudo tee /etc/apt/preferences.d/pi-apps-local-packages >/dev/null
 }
 
 repo_rm() { #remove the local apt repository
@@ -323,6 +353,9 @@ repo_rm() { #remove the local apt repository
   apt_lock_wait
   
   rm -rf /tmp/pi-apps-local-packages || sudo rm -rf /tmp/pi-apps-local-packages || error "repo_rm(): failed to remove the local repository: /tmp/pi-apps-local-packages"
+  
+  #Also remove broken symbolic link to /tmp/pi-apps-local-packages/./Packages
+  sudo rm -f /var/lib/apt/lists/_tmp_pi-apps-local-packages_._Packages
 }
 
 app_to_pkgname() { #given an app-name, convert it to a unique, valid package-name that starts with 'pi-apps-'
@@ -382,7 +415,7 @@ install_packages() { #Make some packages dependencies of the $app app. Package-n
       
       #status "Handling url: $package"
       
-      local filename="$HOME/$(basename "$package")"
+      local filename="/tmp/$(basename "$package")"
       
       #add .deb extension if filename doesn't end with it.
       if [ "${filename: -4}" != ".deb" ]; then
@@ -481,7 +514,7 @@ Package: $package_name" > ~/$package_name/DEBIAN/control
     
     #Before apt update, check if local repo still exists
     if [ "$using_local_packages" == 1 ] && [ ! -f /tmp/pi-apps-local-packages/Packages ];then
-      error "User error: Uh-oh, the /tmp/pi-apps-local-packages folder went missing while installing packages. This usually happens if you try to install several apps at the same time in multiple terminals."
+      error "User error: Uh-oh, the /tmp/pi-apps-local-packages folder went missing while installing packages.\nThis usually happens if you try to install several apps at the same time in multiple terminals."
     fi
     
     #run an apt update
@@ -489,7 +522,7 @@ Package: $package_name" > ~/$package_name/DEBIAN/control
     
     #After apt update, check again if local repo still exists
     if [ "$using_local_packages" == 1 ] && [ ! -f /tmp/pi-apps-local-packages/Packages ];then
-      error "User error: Uh-oh, the /tmp/pi-apps-local-packages folder went missing while installing packages. This usually happens if you try to install several apps at the same time in multiple terminals."
+      error "User error: Uh-oh, the /tmp/pi-apps-local-packages folder went missing while installing packages.\nThis usually happens if you try to install several apps at the same time in multiple terminals."
     fi
     
     #Build .deb file for the dummy package
@@ -515,7 +548,7 @@ Package: $package_name" > ~/$package_name/DEBIAN/control
       
       #some error reports seem to indicate that package URLs aren't being properly downloaded. This output aims to solve the mystery.
       if [ "$using_local_packages" == 1 ] && [ ! -f /tmp/pi-apps-local-packages/Packages ];then
-        echo "User error: Uh-oh, the /tmp/pi-apps-local-packages folder went missing while installing packages. This usually happens if you try to install several apps at the same time in multiple terminals."
+        echo "User error: Uh-oh, the /tmp/pi-apps-local-packages folder went missing while installing packages.\nThis usually happens if you try to install several apps at the same time in multiple terminals."
       elif [ "$using_local_packages" == 1 ] && echo "$output" | grep 'but it is not installable' ;then
         echo -e "\e[91mThe Pi-Apps Local Repository was being used, and a package seemed to not be available. Here's the Packages file:\e[39m"
         cat /tmp/pi-apps-local-packages/Packages
@@ -804,6 +837,9 @@ read_category_files() { #Generates a combined categories-list from several sourc
   get_model &>/dev/null
   version_id=$(grep 'VERSION_ID=' /etc/os-release | tr -cd '0123456789.')
   unset device_override
+  if [[ "$model" != *"Raspberry Pi"* ]]; then
+    device_override="${DIRECTORY}/etc/category-overrides-non-raspberry"
+  fi
   if [[ ! -z "$jetson_model" ]] && [[ "$version_id" == "18.04" ]]; then
     device_override="${DIRECTORY}/etc/category-overrides-jetson-18.04"
   fi
@@ -862,10 +898,10 @@ app_prefix_category() { #lists all apps in a category with format "category/app"
 #   #It simply "clicks" a bitly link - a shortened URL - so that the total number of clicks can be tallied to determine how popular a certain app is.
 #   app="$1"
 #   trigger="$2"
-  
+#
 #   [ -z "$app" ] && error "bitly_link(): requires an app argument"
 #   [ -z "$trigger" ] && error "bitly_link(): requires a trigger argument"
-  
+#
 #   #if the 'Enable Analytics' setting is enabled
 #   if [ "$(cat "${DIRECTORY}/data/settings/Enable analytics")" == 'Yes' ];then
 #     #determine the name of the link to "click"
@@ -990,16 +1026,14 @@ app_type() { #there are 'standard' apps, and there are 'package' apps - an alias
 }
 
 will_reinstall() { #return 0 if $1 app will be reinstalled during an update, otherwise return 1.
-  [ -z "$1" ] && error 'will_reinstall(): requires an argument'
+  local app="$1"
+  [ -z "$app" ] && error 'will_reinstall(): requires an argument'
   
   #detect which installation script exists and get the hash for that one
-  scriptname="$(script_name_cpu "$1")"
+  local scriptname="$(script_name_cpu "$app")"
   
-  oldinstallhash="$(sha1sum "${DIRECTORY}/apps/${1}/${scriptname}" 2>/dev/null | awk '{print $1}')"
-  newinstallhash="$(sha1sum "${DIRECTORY}/update/pi-apps/apps/${1}/${scriptname}" 2>/dev/null | awk '{print $1}')"
-  
-  #if install script was changed                              #if installed already
-  if [ "$newinstallhash" != "$oldinstallhash" ] && [ "$(app_status "${1}")" == 'installed' ];then
+  #if install script exists in update folder, and if install script was changed, and if installed already
+  if [ -f "${DIRECTORY}/update/pi-apps/apps/${app}/${scriptname}" ] && ! files_match "${DIRECTORY}/update/pi-apps/apps/${app}/${scriptname}" "${DIRECTORY}/apps/${app}/${scriptname}" && [ "$(app_status "$app")" == 'installed' ];then
     return 0
   else
     return 1
@@ -1011,20 +1045,32 @@ app_search() { #search all apps for $1, with filenames in $2 (space-separated an
   [ -z "$query" ] && error "app_search(): requires a search query."
   
   #you can change which app-files are searched. Default: description, website, credits
-  local search_files="$(echo "$2" | sed 's/^ //g' | sed 's/ $//g' | sed 's/  / /g')"
-  [ -z "$search_files" ] && search_files="description website credits"
+  if [ ! -z "${2+x}" ];then
+    #second argument can be set, but left blank
+    local search_files="$(echo "$2" | sed 's/^ //g' | sed 's/ $//g' | sed 's/  / /g')"
+  else
+    #if no second argument provided
+    local search_files="description website credits"
+  fi
   
   #generate syntax for the find command. Example output: "-name description -o -name website -o -name credits"
   local find_syntax="$(echo "$search_files" | sed 's/ / -o -name /g')"
   echo "search pattern: $find_syntax" 1>&2
   
-  #search description and website
-  local results="$(find "${DIRECTORY}/apps" \( -name $find_syntax \) -exec grep -Fi "$query" {} + | awk -F: '{print $1}' | sed "s+${DIRECTORY}/apps/++g" | sed 's+/.*++g')"
+  #search app files
+  if [ -z "$search_files" ];then
+    local results=""
+  else
+    local results="$(find "${DIRECTORY}/apps" \( -name $find_syntax \) -exec grep -m1 -Fi "$query" {} + | awk -F: '{print $1}' | sed "s+${DIRECTORY}/apps/++g" | sed 's+/.*++g' | sort | uniq)"
+  fi
   #hide incompatible and hidden/disabled apps
-  results="$(echo "$results" | list_subtract "$(list_apps hidden)" | list_intersect "$(list_apps cpu_installable)" | sort)"
+  results="$(echo "$results" | list_subtract "$(list_apps hidden)" | list_intersect "$(list_apps cpu_installable)")"
   
-  #search app names
-  results="$(list_apps cpu_installable | list_subtract "$(list_apps hidden)" | grep -i "$query" | sort)
+  local app_list="$(list_apps cpu_installable | list_subtract "$(list_apps hidden)")"
+  
+  #search app names - first prioritize results starting with query, then show results containing query, then show other pre-existing results.
+  results="$(grep -i "^$query" <<<"$app_list" | sort)
+$(grep -i "$query" <<<"$app_list" | sort)
 $results"
   
   #remove duplicate entries
@@ -1033,6 +1079,7 @@ $results"
 }
 
 app_search_gui() { #graphical interface to search for apps
+  
   local output=''
   output="$(yad "${yadflags[@]}" --title=Search --width=310 \
     --text="Search for apps."$'\n'"Not case-sensitive." \
@@ -1044,8 +1091,7 @@ app_search_gui() { #graphical interface to search for apps
   
   local query="$(echo "$output" | sed -n 1p)"
   
-  search_files='description website credits scripts'
-  
+  local search_files='description website credits scripts'
   search_files=''
   echo "$output" | sed -n 2p | grep -q 'TRUE' && search_files+='description '
   echo "$output" | sed -n 3p | grep -q 'TRUE' && search_files+='website '
@@ -1056,27 +1102,36 @@ app_search_gui() { #graphical interface to search for apps
   
   results="$(app_search "$query" "$search_files")"
   
-  if [ "$(echo "$results" | wc -l)" == 1 ];then
+  if [ ! -z "$results" ] && [ "$(echo "$results" | wc -l)" == 1 ];then
     #if only one result, don't ask user to select it
-    echo "$results"
+    echo "$results" #return result to outside world
     
-  elif [ ! -z "$results" ];then
+  elif [ ! -z "$results" ];then #display apps and their categories in a list for user to select
+    
+    local app="$(show_app() {
+      echo "$2"
+    }
+    export -f show_app
+    
+    categories="$(read_category_files)"
     
     IFS=$'\n'
-    LIST=''
     for app in $results ;do
-      LIST="$LIST
-${DIRECTORY}/apps/${app}/icon-24.png
+      local category="$(grep '^'"$app"'|' <<<"$categories" | awk -F'|' '{print $2}')"
+      
+      echo "${DIRECTORY}/apps/${app}/icon-24.png
 $app
-$(echo "$(cat "${DIRECTORY}/apps/${app}/description" || echo "Description unavailable")" | head -n1)"
-    done
-    LIST="${LIST:1}" #remove first empty newline
+$( (cat "${DIRECTORY}/apps/${app}/description" || echo "Description unavailable") | head -n1)
+<small>in</small>
+${DIRECTORY}/icons/categories/${category##*/}.png
+${category}"
+    done | \
+    yad "${yadflags[@]}" --title="Results for "\""$query"\""" --width=310 --height=250 \
+      --list --no-headers  --column=app:IMG --column=appname --column=tooltip:HD --column=in --column=category:IMG --column=categoryname \
+      --tooltip-column=3 --no-buttons \
+      --select-action="bash -c "\""show_app %s; kill "\$"YAD_PID"\""")"
     
-    app="$(echo "$LIST" | yad "${yadflags[@]}" --title=Results --width=310 --height=250 \
-      --list --no-headers  --column=:IMG --column=name --column=tooltip:HD \
-      --print-column=2 --tooltip-column=3)" || exit 0
-    
-    echo "$app"
+    echo "$app" #return result to outside world
   else
     yad "${yadflags[@]}" --title=Results --width=310 \
       --text="No results found for "\""<b>$query</b>"\""." \
@@ -1631,8 +1686,13 @@ If this keeps happening, see: https://stackoverflow.com/questions/66366582")
     error_type="internet"
   fi
   
-  if grep -q "errorCode=1 SSL/TLS handshake failure\|errorCode=1 total length mismatch.\|errorCode=1 Failed to establish connection, cause: Connection refused\|errorCode=22 The response status is not successful\|errorCode=24 Authorization failed\.\|errorCode=2 Timeout\.\|abort: Connection reset by peer\|104: Connection reset by peer\|errorCode=19.*Name resolution for.*failed\|failed: Temporary failure in name resolution.\|Unable to establish SSL connection.\|Connection closed at byte \|Read error at byte \|failed: No route to host\.\|errorCode=8 Invalid range header\." <<<"$errors" ;then
+  if grep -q "errorCode=1 SSL/TLS handshake failure\|errorCode=1 total length mismatch.\|errorCode=1 Failed to establish connection, cause: Connection refused\|errorCode=22 The response status is not successful\|errorCode=2 Timeout\.\|abort: Connection reset by peer\|104: Connection reset by peer\|errorCode=19.*Name resolution for.*failed\|failed: Temporary failure in name resolution.\|Unable to establish SSL connection.\|Connection closed at byte \|Read error at byte \|failed: No route to host\.\|errorCode=8 Invalid range header\." <<<"$errors" ;then
     error_caption+=("Download failed. Check your internet connection and firewall, then try again.")
+    error_type="internet"
+  fi
+  
+  if grep -qF "errorCode=24 Authorization failed." <<<"$errors" ;then
+    error_caption+=("Download failed with the \"Authorization failed\" error. This sometimes happens during a download on bad Wi-Fi, but if this problem persists, please reach out to the Pi-Apps developers.")
     error_type="internet"
   fi
   
@@ -1645,6 +1705,13 @@ If this keeps happening, see: https://stackoverflow.com/questions/66366582")
     error_caption+=("Your system seems to be having trouble with TLS connections.
 
 Check your internet connection and try again.")
+    error_type="internet"
+  fi
+  
+  if grep -qF "error: RPC failed; curl 56 GnuTLS recv error (-54): Error in the pull function." <<<"$errors" ;then
+    error_caption+=("Download failed due to a weird GnuTLS recv error. This is a problem with your system, not Pi-Apps. 
+
+Try following the suggestions proposed on this website: https://stackoverflow.com/questions/38378914/how-to-fix-git-error-rpc-failed-curl-56-gnutls")
     error_type="internet"
   fi
   
@@ -1737,19 +1804,12 @@ sudo apt-get install xz-utils")
     error_type="system"
   fi
   
-  if grep -qF "error: RPC failed; curl 56 GnuTLS recv error (-54): Error in the pull function." <<<"$errors" ;then
-    error_caption+=("Download failed due to a weird GnuTLS recv error. This is a problem with your system, not Pi-Apps. 
-
-Try following the suggestions proposed on this website: https://stackoverflow.com/questions/38378914/how-to-fix-git-error-rpc-failed-curl-56-gnutls")
-    error_type="internet"
-  fi
-  
   if grep -qF "aria2c: error while loading shared libraries: /lib/arm-linux-gnueabihf/libaria2.so.0: unexpected reloc type 0xc8" <<<"$errors" ;then
     error_caption+=("Download failed because aria2c could not load the libaria2 library.
 
 Try reinstalling the package:
 sudo apt install --reinstall libaria2-0")
-    error_type="internet"
+    error_type="system"
   fi
   
   if grep -q "errorCode=16 Failed to open the file .*, cause: Permission denied" <<<"$errors" ;then
@@ -1821,9 +1881,33 @@ sudo chown \$USER:\$USER ~/.config/autostart")
     error_type="system"
   fi
   
+  if grep -q "The directory '$HOME/\.cache/pip' or its parent directory is not owned by the current user" <<<"$errors";then
+    error_caption+=("The Python package manager (pip3) could not make changes to its own cache folder: $HOME/.cache/pip
+Most likely, you tried running pip3 with sudo in the past, or you tried running a Pi-Apps script with sudo in the past. (not recommended!)
+
+To fix this, run this command:
+sudo chown -R $USER:$USER $HOME/.cache/pip")
+    error_type="system"
+  fi
+  
+  if grep -qF "collect2: fatal error: ld terminated with signal 11 [Segmentation fault]" <<<"$errors";then
+    error_caption+=("Failed to compile! The error was: "\""collect2: fatal error: ld terminated with signal 11 [Segmentation fault]"\""
+Try following the instructions on this website:
+https://stackoverflow.com/questions/57051568/collect2-fatal-error-ld-terminated-with-signal-11-segmentation-fault
+If this ends up fixing the problem, please notify the Pi-Apps developers. If you continue to encounter this error, please reach out to the Pi-Apps developers.")
+    error_type="system"
+  fi
+  
+  if grep -qF "ModuleNotFoundError: No module named 'lsb_release'" <<<"$errors";then
+    error_caption+=("Your lsb_release command seems to be incompletely installed. Try running this command to fix it:
+sudo apt install --reinstall lsb_release")
+    error_type="system"
+  fi
+  
   #Individual scripts can self-diagnose by outputting "User error: ", followed by the diagnosis.
   if grep -q "^User error: " <<<"$errors" ;then
-    error_caption+=("$(grep "^User error: " <<<"$errors" | sed 's/^User error: //g')")
+    #return all lines of output after a line mentions "User error: "
+    error_caption+=("$(sed -ne '/^User error: /,$ p' <<<"$errors" | sed 's/^User error: //g')")
     error_type="system"
   fi
   
@@ -1842,7 +1926,7 @@ format_logfile() { #remove ANSI escape sequences from a given file, and add OS i
   [ -z "$1" ] && error "format_logfile: no filename given!"
   [ ! -f "$1" ] && error "format_logfile: given filename ($1) does not exist or is not a file!"
   
-  echo -e "$(get_device_info)\n\nBEGINNING OF LOG FILE:\n-----------------------\n\n$(cat "$1" | tr '\r' '\n' | sed 's/\x1b\[[0-9;]*m//g' | sed 's/\x1b\[[0-9;]*//g' | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | grep -vF '.......... .......... .......... .......... ..........')" > "$1"
+  echo -e "$(get_device_info)\n\nBEGINNING OF LOG FILE:\n-----------------------\n\n$(cat "$1" | tr '\r' '\n' | sed "s/\x1b\[?[0-9;]*[a-zA-Z]//g" | sed "s/\x1b\[[0-9;]*[a-zA-Z]//g" | sed 's/\x1b\[[0-9;]*//g' | grep -vF '.......... .......... .......... .......... ..........')" > "$1"
   
 }
 
@@ -1863,6 +1947,84 @@ send_error_report() { #non-interactively send a Pi-Apps error log file to the Bo
   local errors="$(bash <(base64 -d <<<"aWYgZ3JlcCAnXkxhc3QgdXBkYXRlZCBQaS1BcHBzIG9uOicg$(base64 <<<"$1")IDt0aGVuIGN1cmwgLUYgImZpbGU9QFwi$(base64 <<<"$1")XCI7ZmlsZW5hbWU9XCIkKGJhc2VuYW1lICI=$(base64 <<<"$1")IiB8IHNlZCAncy9cLi4qLy50eHQvZycpXCIiICIkKHdnZXQgLXFPLSAiJChiYXNlNjQgLWQgPDw8ImFIUjBjSE02THk5eVlYY3VaMmwwYUhWaWRYTmxjbU52Ym5SbGJuUXVZMjl0TDBKdmRITndiM1F2Y0drdFlYQndjeTFoYm1Gc2VYUnBZM012YldGcGJpOWxjbkp2Y2kxc2IyY3RkMlZpYUc5dmF5MXVaWGNLIikiIHwgJChiYXNlNjQgLWQgPDw8IlltRnpaVFkwSUMxa0NnPT0iKSkiIDtlbHNlIHNsZWVwIDAuNyA7ZmkK" | tr -d '\n') 2>&1)"
   [ $? != 0 ] && error "curl failed to upload log file!\nErrors:\n$errors"
   
+}
+
+diagnose_apps() { #Given a list of apps that failed to install/uninstall, loop through each error log, diagnose it, and provide a "Send report" button if applicable.
+  local failed_apps="$1"
+  
+  local num_lines="$(wc -l <<<"$failed_apps")"
+  local i=1 #counter to track which failed_app in the list is current
+  
+  for app in $failed_apps ;do
+    logfile="$(get_logfile "$app")"
+    #given the app's logfile, categorize the error and set the error_type variable
+    diagnosis="$(log_diagnose "$logfile")"
+    
+    error_type="$(echo "$diagnosis" | head -n1)" #first line of diagnosis is the type of error
+    error_caption="$(echo "$diagnosis" | tail -n +2)" #subsequent lines of diagnosis are caption(s)
+    
+    #set the window-text
+    if [ "$error_type" == unknown ];then
+      text="<b>${app^}</b> failed to $action for an <b>unknown</b> reason."
+    else
+      text="<b>${app^}</b> failed to $action because Pi-Apps encountered $([[ "$error_type" == [aeiou]* ]] && echo an || echo a) <b>$error_type</b> error."
+    fi
+    
+    #if the error_type is NOT system, internet, or package, AND the app exists in the official Pi-Apps repository, AND the app-script has not been modified, AND the system setup is supported, AND the app is not a package-app, then enable the "Send report button"
+    if [ "$(app_type "$app")" == package ];then
+      text+=$'\n'"Error report cannot be sent because this \"app\" is really just a shortcut to $action a Debian package. It's not a problem that Pi-Apps can fix."
+    elif [[ "$error_type" =~ ^(system|internet|package)$ ]];then
+      text+=$'\n'"Error report cannot be sent because this is not an issue with Pi-Apps."
+    elif ! list_apps online | grep -q "$app" ;then
+      text+=$'\n'"Error report cannot be sent because this app is not in the official repository."
+    elif [ "$action" == install ] && [ "$(app_type "$app")" == standard ] && ! files_match "${DIRECTORY}/update/pi-apps/apps/${app}/$(script_name_cpu "$app")" "${DIRECTORY}/apps/${app}/$(script_name_cpu "$app")" ;then
+      text+=$'\n'"Error report cannot be sent because this app is not the official version."
+    elif [ "$action" == uninstall ] && [ "$(app_type "$app")" == standard ] && ! files_match "${DIRECTORY}/update/pi-apps/apps/${app}/uninstall" "${DIRECTORY}/apps/${app}/uninstall" ;then
+      text+=$'\n'"Error report cannot be sent because this app does not match the official version."
+    elif [ "$supported" == no ];then
+      text+=$'\n'"Error report cannot be sent because your system is unsupported."
+    else
+      #if all of the above checks evaluate to FALSE, then display the "Send report" button.
+      send_button=(--button='Send report'!"${DIRECTORY}/icons/send-error-report.png":2)
+    fi
+    
+    #display support links, depending on if this was a package-app or a script-app
+    if [ "$(app_type "$app")" == package ];then
+      text+=$'\n'"As this is an APT error, consider Googling the errors or asking for help in the <a href=\"https://forums.raspberrypi.com\">Raspberry Pi Forums</a>."
+    else
+      text+=$'\n'"Support is available on <a href=\"https://discord.gg/RXSTvaUvuu\">Discord</a> and <a href=\"https://github.com/Botspot/pi-apps/issues/new/choose\">Github</a>."
+    fi
+    
+    #if the error_caption is empty, display logfile instead
+    if [ -z "$error_caption" ];then
+      text+=$'\n'"You can view the terminal output below. (scroll down)"
+      error_caption="$(cat "$logfile")"
+    else
+      text+=$'\n'"Below, Pi-Apps explains what went wrong and how you can fix it."
+    fi
+    
+    #this dialog may be one in a series of failed_app dialogs. Name the window-close button accordingly.
+    if [ $i -lt $num_lines ];then
+      close_button=(--button="Next error!${DIRECTORY}/icons/forward.png":1)
+    else
+      close_button=(--button="Close!${DIRECTORY}/icons/exit.png":1)
+    fi
+    
+    echo "$error_caption" | yad "${yadflags[@]}" --class Pi-Apps --name "Pi Apps" --text-info --width=700 --height=300 --title="Error occured when $(echo "${action}" | sed 's/updateing/updating/g') $app ($i/$num_lines)" \
+      --image="${DIRECTORY}/icons/error.png" --image-on-top \
+      --text="$text" --wrap --fontname=12 \
+      --button='View log'!"${DIRECTORY}/icons/log-file.png"!"Review the output from when <b>$app</b> tried to $action.":"bash -c 'view_file "\""$logfile"\""'" \
+      "${send_button[@]}" \
+      "${close_button[@]}"
+    button="${PIPESTATUS[1]}"
+    
+    if [ $button == 2 ];then
+      #send error log
+      send_error_report "$logfile"
+    fi
+    
+    i=$((i+1))
+  done
 }
 #end of logfile functions
 
@@ -1898,6 +2060,12 @@ text_editor() { #Open user-preferred text editor. $1 is file to open
   
   #find the best text editor
   preferrededitor="$(cat "${DIRECTORY}/data/settings/Preferred text editor")"
+  # map friendly name of editors to binary name
+  if [ "$preferrededitor" == "Visual Studio Code" ];then
+    preferrededitor="code"
+  elif [ "$preferrededitor" == "VSCodium" ];then
+    preferrededitor="codium"
+  fi
   
   #change preferred editor if user-default doesn't exist
   if ! command -v "$preferrededitor" >/dev/null;then
@@ -1929,6 +2097,14 @@ view_file() { #maximized yad window to view a text file
     --title="Viewing file" --text="File location: <b>$file</b>" \
     --text-info --tail --maximized \
     --button=Close #--back='#505050' --fore='#00FFFF'
+}
+
+files_match() { #$1 and $2 are paths to files
+  if [ ! -f "$1" ] || [ ! -f "$2" ];then
+    return 1
+  else
+    diff "$1" "$2" -q >/dev/null
+  fi
 }
 
 is_supported_system() { #return 0 if system is supported, otherwise return 1
@@ -1973,21 +2149,8 @@ get_device_info() { #returns information about current install and hardware
   [ -s "$DIRECTORY/etc/git_url" ] && echo "Latest Pi-Apps version: $(curl https://api.github.com/repos/Botspot/pi-apps/commits/master 2>&1 | grep '"date":' | tail -n 1 | sed 's/"date"://g' | xargs date +%x -d)"
   echo "Kernel: $(uname -m) $(uname -r)"
   # obtain model name
-  if [[ -d /system/app/ && -d /system/priv-app ]]; then
-    model="$(getprop ro.product.brand) $(getprop ro.product.model)"
-  fi
-  if [[ -z "$model" ]] && [[ -f /sys/devices/virtual/dmi/id/product_name ||
-          -f /sys/devices/virtual/dmi/id/product_version ]]; then
-    model="$(tr -d '\0' < /sys/devices/virtual/dmi/id/product_name)"
-    model+=" $(tr -d '\0' < /sys/devices/virtual/dmi/id/product_version)"
-  fi
-  if [[ -z "$model" ]] && [[ -f /sys/firmware/devicetree/base/model ]]; then
-    model="$(tr -d '\0' < /sys/firmware/devicetree/base/model)"
-  fi
-  if [[ -z "$model" ]] && [[ -f /tmp/sysinfo/model ]]; then
-      model="$(tr -d '\0' < /tmp/sysinfo/model)"
-  fi
-  echo "Device model: $model"
+  get_model
+  echo "Device model: $model $jetson_model"
   echo "Cpu name: $( lscpu | awk '/Model name:/ {print $3}' )"
   echo "Ram size: $(echo "scale=2 ; $( awk '/MemTotal/ {print $2}' /proc/meminfo ) / 1024000 " | bc ) GB"
   
@@ -2021,6 +2184,7 @@ get_model() { # populates the model and jetson_model variables with information 
       model="$(tr -d '\0' < /tmp/sysinfo/model)"
   fi
   unset jetson_model
+  unset SOC_ID
   # obtain jetson model name (if available)
   # nvidia, in their official L4T (Linux for Tegra) releases 32.X and 34.X, set a distinct tegra family in the device tree /proc/device-tree/compatible
   if [[ -e "/proc/device-tree/compatible" ]]; then
@@ -2033,6 +2197,38 @@ get_model() { # populates the model and jetson_model variables with information 
       jetson_model="xavier"
     elif [[ ${CHIP} =~ "tegra234" ]]; then
       jetson_model="orin"
+    elif [[ ${CHIP} =~ "tegra239" ]]; then
+      jetson_model="switch-pro-chip"
+    elif [[ ${CHIP} =~ "tegra" ]]; then
+      jetson_model="jetson-unknown"
+    elif [[ ${CHIP} =~ "rk3399" ]]; then
+      SOC_ID="rk3399"
+    elif [[ ${CHIP} =~ "rk3308" ]]; then
+      SOC_ID="rk3308"
+    elif [[ ${CHIP} =~ "rk3326" ]]; then
+      SOC_ID="rk3326"
+    elif [[ ${CHIP} =~ "rk3328" ]]; then
+      SOC_ID="rk3328"
+    elif [[ ${CHIP} =~ "rk3368" ]]; then
+      SOC_ID="rk3368"
+    elif [[ ${CHIP} =~ "rk3566" ]]; then
+      SOC_ID="rk3566"
+    elif [[ ${CHIP} =~ "rk3568" ]]; then
+      SOC_ID="rk3568"
+    elif [[ ${CHIP} =~ "g12b" ]]; then
+      SOC_ID="g12b"
+    elif [[ ${CHIP} =~ "g12b" ]]; then
+      SOC_ID="g12b"
+    elif [[ ${CHIP} =~ "g12b" ]]; then
+      SOC_ID="g12b"
+    elif [[ ${CHIP} =~ "bcm2711" ]]; then
+      SOC_ID="bcm2711"
+    elif [[ ${CHIP} =~ "bcm2837" ]]; then
+      SOC_ID="bcm2837"
+    elif [[ ${CHIP} =~ "bcm2836" ]]; then
+      SOC_ID="bcm2836"
+    elif [[ ${CHIP} =~ "bcm2835" ]]; then
+      SOC_ID="bcm2835"
     fi
   # as part of the 2X.X L4T releases, the kernel is older and the tegra family is found in /sys/devices/soc0/family
   elif [[ -e "/sys/devices/soc0/family" ]]; then
@@ -2050,6 +2246,9 @@ get_model() { # populates the model and jetson_model variables with information 
     elif [[ ${CHIP} =~ "tegra210" ]]; then
       jetson_model="tegra-x1"
     fi
+  fi
+  if [ -n "$jetson_model" ]; then
+    SOC_ID="$jetson_model"
   fi
 }
 
@@ -2096,7 +2295,7 @@ multi_install_gui() { #graphical interface to install multiple apps from a list.
 ${DIRECTORY}/apps/$app/icon-24.png
 $app
 $(head -n1 "${DIRECTORY}/apps/$app/description")"
-  done | sed 's/&/&amp;/g' | yad "${yadflags[@]}" --list --checklist \
+  done | sed 's/&/&amp;/g' | yad "${yadflags[@]}" --window-icon="${DIRECTORY}/icons/settings.png" --list --checklist \
     --width=300 --height=500 \
     --hide-column=4 --print-column=3 --tooltip-column=4 --no-headers \
     --text="Install everything you want!"$'\n'"Note: apps that are already installed are not shown." \
@@ -2148,7 +2347,7 @@ multi_uninstall_gui() { #graphical interface to uninstall multiple apps from a l
 ${DIRECTORY}/apps/$app/icon-24.png
 $app
 $(head -n1 "${DIRECTORY}/apps/$app/description")"
-  done | sed 's/&/&amp;/g' | yad "${yadflags[@]}" --list --checklist \
+  done | sed 's/&/&amp;/g' | yad "${yadflags[@]}" --window-icon="${DIRECTORY}/icons/settings.png" --list --checklist \
     --width=300 --height=500 \
     --hide-column=4 --print-column=3 --tooltip-column=4 --no-headers \
     --text="Uninstall everything you want!"$'\n'"Note: apps that are not installed are not shown." \
@@ -2386,7 +2585,7 @@ wget() { #Intercept all wget commands. When possible, uses aria2c.
           if [[ "$line" == '['*']' ]];then
             
             #hide cursor
-            printf "\033[?25l"
+            printf "\e[?25l"
             
             #print the total data only, like: "0.9GiB/1.1GiB"
             statsline="$(echo "$line" | awk '{print $2}' | sed 's/(.*//g' | tr -d '\n') "
@@ -2408,7 +2607,7 @@ wget() { #Intercept all wget commands. When possible, uses aria2c.
             progress_characters=$(((percent*available_width)/100))
             
             statsline+="\e[92m\e[1m$(for ((i=0; i<$progress_characters; i++)); do printf "—"; done)\e[39m" # other possible characters to put here: █🭸
-            echo -ne "\e[0K${statsline}\r\033\e[0m" 1>&2 #clear and print over previous line
+            echo -ne "\e[0K${statsline}\r\e\e[0m" 1>&2 #clear and print over previous line
             
             #reduce the line and print over the previous line, like: "1.1GiB/1.1GiB(98%) DL:18MiB"
             #echo "$line" | awk '{print $2 " " $4 " " substr($5, 1, length($5)-1)}' | tr -d '\n'
@@ -2428,7 +2627,7 @@ wget() { #Intercept all wget commands. When possible, uses aria2c.
   if [ $exitcode == 0 ] && [ "$quiet" == 0 ];then
     
     #show cursor
-    printf "\033[?25h"
+    printf "\e[?25h"
     
     #display "done" message
     if [ "$use" == aria2c ];then
@@ -2439,6 +2638,9 @@ wget() { #Intercept all wget commands. When possible, uses aria2c.
       status_green "Done" 1>&2
     fi
   elif [ $exitcode != 0 ] && [ "$quiet" == 0 ];then
+    #show cursor
+    printf "\e[?25h"
+    
     echo -e "\n\e[91mFailed to download: $url\nPlease review errors above.\e[0m" 1>&2
   fi
   
@@ -2457,6 +2659,7 @@ unzip() { #say what is being extracted
   [ -f "$1" ] && status "Extracting: $1"
   [ -f "$2" ] && status "Extracting: $2"
   
+  #The -o flag means to overwrite without prompting
   command unzip -o "$@"
   return $?
 }
@@ -2476,7 +2679,7 @@ nproc() { #Reduce the number of compile threads on low-RAM systems
   
   local free="$(free | grep 'Mem:' | awk '{print $4}')"
   
-  if [ "$free" -gt $((500*1024)) ];then
+  if [ "$free" -gt $((500*1024)) ] || [ "$GITHUB_ACTIONS" == "true" ];then
     #Free memory >500MB, use normal number of threads
     command nproc
   else
@@ -2487,20 +2690,20 @@ nproc() { #Reduce the number of compile threads on low-RAM systems
 }
 #end of command interceptors
 
-trap "exit 1" INT
-
-cd $HOME
+#Stop a running api function if user presses Ctrl+C, but avoid doing this if api is sourced in an interactive terminal.
+if [[ $- != *i* ]] ;then
+  trap "exit 1" INT
+  cd $HOME
+fi
 
 add_english
 
 #set the system GTK theme for yad windows
 guimode="$(cat "${DIRECTORY}/data/settings/App List Style" 2>/dev/null || echo yad-default)"
-if [ "$guimode" == yad-dark ];then
-  export GTK_THEME=Adwaita-dark
-elif [ "$guimode" == yad-light ];then
-  export GTK_THEME=PiXflat
-elif [ "$guimode" == yad-default ];then
+if [ "$guimode" == yad-default ];then
   export GTK_THEME=''
+elif [[ "$guimode" = yad* ]];then
+  export GTK_THEME=${guimode//yad-/}
 elif [ "$guimode" == xlunch-light-3d ];then
   export GTK_THEME=''
 elif [ "$guimode" == xlunch-dark-3d ];then
@@ -2510,7 +2713,7 @@ elif [ "$guimode" == xlunch-dark ];then
 fi
 
 #this array stores flags that are used in all yad windows - saves on the typing and makes it easy to change an attribute on all dialogs from one place.
-yadflags=(--center --window-icon="${DIRECTORY}/icons/logo.png" --title="Pi-Apps" --separator='\n')
+yadflags=(--class Pi-Apps --name "Pi Apps" --center --window-icon="${DIRECTORY}/icons/logo.png" --title="Pi-Apps" --separator='\n')
 
 #determine if host system is 64 bit arm64 or 32 bit armhf
 if [ "$(od -An -t x1 -j 4 -N 1 "$(readlink -f /sbin/init)")" = ' 02' ];then
@@ -2524,6 +2727,60 @@ fi
 #Make dual-pane yad windows work correctly on wayland
 export GDK_BACKEND=x11
 
+# add upstream and original lsb-release info for all scripts to use
+
+# _os_original_* variables are only set for downstream releases (eg: Pop!_OS, Linux Mint, and KDE Neon)
+# this allows for scripts to simply check for the existance of _os_original_* variables and operate differently if found
+# note: Pop!_OS, Linux Mint, and KDE Neon are NOT official Ubuntu flavors (like Kubuntu, Ubuntu MATE, Ubuntu Kylin, Ubuntu Budgie, Lubuntu, Ubuntu Studio, Ubuntu Unity, and Xubuntu)
+# official Ubuntu flavors use ONLY the official Ubuntu repositories and are directly supported by Ubuntu. These other releases are simply "based" on Ubuntu, much like Raspbian and PiOS are "based" on Debian.
+
+# first check if lsb_release has an upstream option -u
+# if not, check if there is an upstream-release file
+# if not, check if there is a lsb-release.diverted file
+# if not, assume that this is not a ubuntu derivative
+if lsb_release -a -u &>/dev/null; then
+  # This is a Ubuntu Derivative, checking the upstream-release version info
+  __os_id="$(lsb_release -s -i -u)"
+  __os_desc="$(lsb_release -s -d -u)"
+  __os_release="$(lsb_release -s -r -u)"
+  __os_codename="$(lsb_release -s -c -u)"
+  __os_original_id="$(lsb_release -s -i)"
+  __os_original_desc="$(lsb_release -s -d)"
+  __os_original_release="$(lsb_release -s -r)"
+  __os_original_codename="$(lsb_release -s -c)"
+elif [ -f /etc/upstream-release/lsb-release ]; then
+  # ubuntu 22.04+ Linux Mint no longer includes the lsb_release -u option
+  # add a parser for the /etc/upstream-release/lsb-release file
+  source /etc/upstream-release/lsb-release
+  __os_id="$DISTRIB_ID"
+  __os_desc="$DISTRIB_DESCRIPTION"
+  __os_release="$DISTRIB_RELEASE"
+  __os_codename="$DISTRIB_CODENAME"
+  __os_original_id="$(lsb_release -s -i)"
+  __os_original_desc="$(lsb_release -s -d)"
+  __os_original_release="$(lsb_release -s -r)"
+  __os_original_codename="$(lsb_release -s -c)"
+  unset DISTRIB_ID DISTRIB_DESCRIPTION DISTRIB_RELEASE DISTRIB_CODENAME
+elif [ -f /etc/lsb-release.diverted ]; then
+  # ubuntu 22.04+ Pop!_OS no longer includes the /etc/upstream-release/lsb-release or the lsb_release -u option
+  # add a parser for the new /etc/lsb-release.diverted file
+  source /etc/lsb-release.diverted
+  __os_id="$DISTRIB_ID"
+  __os_desc="$DISTRIB_DESCRIPTION"
+  __os_release="$DISTRIB_RELEASE"
+  __os_codename="$DISTRIB_CODENAME"
+  __os_original_id="$(lsb_release -s -i)"
+  __os_original_desc="$(lsb_release -s -d)"
+  __os_original_release="$(lsb_release -s -r)"
+  __os_original_codename="$(lsb_release -s -c)"
+  unset DISTRIB_ID DISTRIB_DESCRIPTION DISTRIB_RELEASE DISTRIB_CODENAME
+else
+  __os_id="$(lsb_release -s -i)"
+  __os_desc="$(lsb_release -s -d)"
+  __os_release="$(lsb_release -s -r)"
+  __os_codename="$(lsb_release -s -c)"
+fi
+
 #if this script is being run standalone, run the specified function
 if [[ "$0" == */api ]];then
   DIRECTORY="$(readlink -f "$(dirname "$0")")"
@@ -2531,7 +2788,7 @@ if [[ "$0" == */api ]];then
   "$@"
   exit $?
 #if being sourced, ensure DIRECTORY variable set
-elif [ -z "$DIRECTORY" ] || [ "$DIRECTORY" == "$HOME" ] || [ ! -d "$DIRECTORY" ];then
+elif [ -z "$DIRECTORY" ] || [ "$DIRECTORY" == "$HOME" ] || [ ! -d "$DIRECTORY" ] || [ ! -f "${DIRECTORY}/api" ] || [ ! -f "${DIRECTORY}/gui" ];then
   echo "DIRECTORY variable must be set to a valid pi-apps folder. Default folder: $HOME/pi-apps"
   return 1
 fi

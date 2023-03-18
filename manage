@@ -21,84 +21,6 @@ fi
 set -a #make all functions in the api available to apps
 source "${DIRECTORY}/api" || error "failed to source ${DIRECTORY}/api"
 
-diagnose_apps() { #Given a list of apps that failed to install/uninstall, loop through each error log, diagnose it, and provide a "Send report" button if applicable.
-  local failed_apps="$1"
-  
-  local num_lines="$(wc -l <<<"$failed_apps")"
-  local i=1 #counter to track which failed_app in the list is current
-  
-  for app in $failed_apps ;do
-    logfile="$(get_logfile "$app")"
-    #given the app's logfile, categorize the error and set the error_type variable
-    diagnosis="$(log_diagnose "$logfile")"
-    
-    error_type="$(echo "$diagnosis" | head -n1)" #first line of diagnosis is the type of error
-    error_caption="$(echo "$diagnosis" | tail -n +2)" #subsequent lines of diagnosis are caption(s)
-    
-    #set the window-text
-    if [ "$error_type" == unknown ];then
-      text="<b>${app^}</b> failed to $action for an <b>unknown</b> reason."
-    else
-      text="<b>${app^}</b> failed to $action because Pi-Apps encountered $([[ "$error_type" == [aeiou]* ]] && echo an || echo a) <b>$error_type</b> error."
-    fi
-    
-    #if the error_type is NOT system, internet, or package, AND the app exists in the official Pi-Apps repository, AND the app-script has not been modified, AND the system setup is supported, AND the app is not a package-app, then enable the "Send report button"
-    if [ "$(app_type "$app")" == package ];then
-      text+=$'\n'"Error report cannot be sent because this \"app\" is really just a shortcut to $action a Debian package. It's not a problem that Pi-Apps can fix."
-    elif [[ "$error_type" =~ ^(system|internet|package)$ ]];then
-      text+=$'\n'"Error report cannot be sent because this is not an issue with Pi-Apps."
-    elif ! list_apps online | grep -q "$app" ;then
-      text+=$'\n'"Error report cannot be sent because this app is not in the official repository."
-    elif [ "$action" == install ] && [ "$(app_type "$app")" == standard ] && [ "$(sha256sum "${DIRECTORY}/apps/${app}/$(script_name_cpu "$app")" | awk '{print $1}')" != "$(sha256sum "${DIRECTORY}/update/pi-apps/apps/${app}/$(script_name_cpu "$app")" | awk '{print $1}')" ];then
-      text+=$'\n'"Error report cannot be sent because this app is not the official version."
-    elif [ "$action" == uninstall ] && [ "$(app_type "$app")" == standard ] && [ "$(sha256sum "${DIRECTORY}/apps/${app}/uninstall" | awk '{print $1}')" != "$(sha256sum "${DIRECTORY}/update/pi-apps/apps/${app}/uninstall" | awk '{print $1}')" ];then
-      text+=$'\n'"Error report cannot be sent because this app does not match the official version."
-    elif [ "$supported" == no ];then
-      text+=$'\n'"Error report cannot be sent because your system is unsupported."
-    else
-      #if all of the above checks evaluate to FALSE, then display the "Send report" button.
-      send_button=(--button='Send report'!"${DIRECTORY}/icons/upload.png":2)
-    fi
-    
-    #display support links, depending on if this was a package-app or a script-app
-    if [ "$(app_type "$app")" == package ];then
-      text+=$'\n'"As this is an APT error, consider Googling the errors or asking for help in the <a href=\"https://forums.raspberrypi.com\">Raspberry Pi Forums</a>."
-    else
-      text+=$'\n'"Support is available on <a href=\"https://discord.gg/RXSTvaUvuu\">Discord</a> and <a href=\"https://github.com/Botspot/pi-apps/issues/new/choose\">Github</a>."
-    fi
-    
-    #if the error_caption is empty, display logfile instead
-    if [ -z "$error_caption" ];then
-      text+=$'\n'"You can view the terminal output below. (scroll down)"
-      error_caption="$(cat "$logfile")"
-    else
-      text+=$'\n'"Below, Pi-Apps explains what went wrong and how you can fix it."
-    fi
-    
-    #this dialog may be one in a series of failed_app dialogs. Name the window-close button accordingly.
-    if [ $i -lt $num_lines ];then
-      close_button=(--button="Next error!${DIRECTORY}/icons/forward.png":1)
-    else
-      close_button=(--button="Close!${DIRECTORY}/icons/exit.png":1)
-    fi
-    
-    echo "$error_caption" | yad "${yadflags[@]}" --text-info --width=700 --height=300 --title="Error occured when ${action}ing $app" \
-      --image="${DIRECTORY}/icons/error.png" --image-on-top \
-      --text="$text" --wrap --fontname=12 \
-      --button='View log'!"${DIRECTORY}/icons/log-file.png"!"Review the output from when <b>$app</b> tried to $action.":"bash -c 'view_file "\""$logfile"\""'" \
-      "${send_button[@]}" \
-      "${close_button[@]}"
-    button="${PIPESTATUS[1]}"
-    
-    if [ $button == 2 ];then
-      #send error log
-      send_error_report "$logfile"
-    fi
-    
-    i=$((i+1))
-  done
-}
-
 validate_apps_gui() { #Given a list of actions and apps, graphically notify the user if there is a problem or ask for confirmation. Result is sent to stdout.
   #action and app are separated by semicolon. (;)
   #example line of input on $1: "install;Zoom"
@@ -130,7 +52,7 @@ validate_apps_gui() { #Given a list of actions and apps, graphically notify the 
     app="$(echo "$line" | awk -F ';' '{print $2}')"
     
     if [ ! -d "${DIRECTORY}/apps/${app}" ];then
-      yad --text="Invalid app "\""<b>$app</b>"\"". Cannot $action it." \
+      yad --class Pi-Apps --name "Pi Apps" --text="Invalid app "\""<b>$app</b>"\"". Cannot $action it." \
         --text-align=center --center --title='Error' --window-icon="${DIRECTORY}/icons/logo.png" \
         --button=OK!"${DIRECTORY}/icons/check.png":0
       
@@ -149,7 +71,7 @@ validate_apps_gui() { #Given a list of actions and apps, graphically notify the 
     app="$(echo "$line" | awk -F ';' '{print $2}')"
     
     if [ "$(app_status "${app}")" == "${action}ed" ];then
-      yad --text="<b>$app</b> is already ${action}ed. Are you sure you want to $action it again?" \
+      yad --class Pi-Apps --name "Pi Apps" --text="<b>$app</b> is already ${action}ed. Are you sure you want to $action it again?" \
         --text-align=center --center --title='Quick question' --window-icon="${DIRECTORY}/icons/logo.png" \
         --button=No!"${DIRECTORY}/icons/exit.png":1 --button=Yes!"${DIRECTORY}/icons/check.png":0
       
@@ -174,11 +96,11 @@ validate_apps_gui() { #Given a list of actions and apps, graphically notify the 
       script_name_cpu="$(script_name_cpu "$app")"
       
       #if the app-script doesn't match version in update folder
-      if [ -f "${DIRECTORY}/update/pi-apps/apps/${app}/${script_name_cpu}" ] && ! diff "${DIRECTORY}/update/pi-apps/apps/${app}/${script_name_cpu}" "${DIRECTORY}/apps/${app}/${script_name_cpu}" -q >/dev/null ;then
+      if [ -f "${DIRECTORY}/update/pi-apps/apps/${app}/${script_name_cpu}" ] && ! files_match "${DIRECTORY}/update/pi-apps/apps/${app}/${script_name_cpu}" "${DIRECTORY}/apps/${app}/${script_name_cpu}" ;then
         
         "${DIRECTORY}/updater" set-status &>/dev/null & #check for updates in background, so if user chooses "Yes", the updater will be guaranteed to have the app listed
         
-        yad --text="Hold up..."$'\n'"<b>$app</b>'s $script_name_cpu script does not match the online version. Either you are about to install an outdated version, or you've made changes to the script yourself."$'\n\n'"<b>Would you like to update $app</b> before installing it?" \
+        yad --class Pi-Apps --name "Pi Apps" --text="Hold up..."$'\n'"<b>$app</b>'s $script_name_cpu script does not match the online version. Either you are about to install an outdated version, or you've made changes to the script yourself."$'\n\n'"<b>Would you like to update $app</b> before installing it?" \
           --text-align=center --center --title='Quick question' --window-icon="${DIRECTORY}/icons/logo.png" --width=400 \
           --button="Install anyway"!"${DIRECTORY}/icons/forward.png":1 --button="Update first"!"${DIRECTORY}/icons/download.png":0
         
@@ -221,7 +143,7 @@ removal_list="$(find /var/lib/apt/lists -type f -name '*Packages' -size 0 2>/dev
 if [ ! -z "$removal_list" ]; then
   if [ x$DISPLAY != x ] ; then
     while ! sudo -n true; do
-      yad --title="Broken Local Packages Repo Detected" --text="Please enter your user password \nso pi-apps can attempt a repair:" --image="dialog-password" --entry --hide-text 2>/dev/null | sudo -S echo "" 2>&1 >/dev/null
+      yad --class Pi-Apps --name "Pi Apps" --title="Broken Local Packages Repo Detected" --text="Please enter your user password \nso pi-apps can attempt a repair:" --image="dialog-password" --entry --hide-text 2>/dev/null | sudo -S echo "" 2>&1 >/dev/null
     done
   fi
   echo "$removal_list" | xargs sudo rm -f
@@ -241,7 +163,7 @@ if [ -z "$current_git_date" ] || [ "$current_local_date" -gt $(($current_git_dat
   upstream_git_date="$(curl https://api.github.com/repos/Botspot/pi-apps/commits/master 2>&1 | grep '"date":' | tail -n 1 | sed 's/"date"://g' | xargs date +%s -d 2>/dev/null)"
   
   if [[ "$upstream_git_date" =~ ^[0-9]+$ ]] && ([ -z "$current_git_date" ] || [ "$upstream_git_date" -gt $(($current_git_date + 7776000)) ]);then
-    yad --window-icon="${DIRECTORY}/icons/logo.png" --width=500 --no-buttons --center --title="Auto-updating Pi-Apps" \
+    yad --class Pi-Apps --name "Pi Apps" --window-icon="${DIRECTORY}/icons/logo.png" --width=500 --no-buttons --center --title="Auto-updating Pi-Apps" \
       --text="Your Pi-Apps installation is somehow 3 months out-of-date."$'\n'"Reinstalling Pi-Apps and saving the old version to ${DIRECTORY}-3-months-old..." &
     yadpid=$!
     
@@ -353,9 +275,9 @@ $app"
     local line
     for line in $queue ;do
       
-      action="$(echo "$line" | awk -F';' '{print $1}')"
-      app="$(echo "$line" | awk -F';' '{print $2}')"
-      code="$(echo "$line" | awk -F';' '{print $3}')"
+      local action="$(echo "$line" | awk -F';' '{print $1}')"
+      local app="$(echo "$line" | awk -F';' '{print $2}')"
+      local code="$(echo "$line" | awk -F';' '{print $3}')"
       
       output+="$(add_to_list "$action" "$app" "$code" stdout)"$'\n'
     done
@@ -419,7 +341,7 @@ $app"
   
   [ -z "$geometry2" ] && geometry2='--center'
   
-  tail -F "${DIRECTORY}/data/manage-daemon/yadlist" | yad "$geometry2" --title='Monitor Progress' \
+  tail -f --retry "${DIRECTORY}/data/manage-daemon/yadlist" | yad --class Pi-Apps --name "Pi Apps" "$geometry2" --title='Monitor Progress' \
     --list --tail --no-headers --column=:IMG --column=:IMG --column=Text --column=:IMG --column=Text --width=330 --height=200 \
     --separator='\n' --window-icon="${DIRECTORY}/icons/logo.png" \
     --dclick-action=true --select-action=true \
@@ -441,7 +363,7 @@ $app"
     
     if [ ! -z "$new_lines" ];then #if new actions have been added to the queue
       
-      #keep track of all actions for this session in the $queue variable
+      #keep track of all actions for this session with the $queue variable
       if [ -z "$queue" ];then
         queue="$new_lines"
       else
@@ -450,17 +372,20 @@ $app"
       #echo "queue is '$queue'"
       
       for line in $new_lines ;do
-        #echo "Received '$line'"
+        #echo "Now handling request: '$line'"
         
         #indicate current action in current line of $queue
         queue="$(echo "$queue" | sed "${current_line_num}s/$/;in-progress/")"
         
-        #refresh the list in queue-viewer window
-        write_list "$queue"
-        
         #get first word of this line - the action. Subsequent words are the name of the app.
         action="$(echo "$line" | awk -F';' '{print $1}')"
         app="$(echo "$line" | awk -F';' '{print $2}')"
+        
+        #Set terminal title
+        echo -ne "\e]0;${action^}ing ${app}\a"
+        
+        #refresh the list in queue-viewer window
+        write_list "$queue"
         
         #echo "Action is $action, app is $app"
         
@@ -496,8 +421,8 @@ ${DIRECTORY}/icons/none-1.png
   #close the queue-viewer window in a few seconds
   (sleep 5; kill $yadpid 2>/dev/null) &
   
-  #diagnose every failed app's logfile
-  failed_apps="$(echo "$queue" | grep -v ';0$' | awk -F';' '{print $2}')"
+  #diagnose every failed app's logfile - list item format is $action;$app;$exitcode
+  failed_apps="$(echo "$queue" | grep ';1$' | awk -F';' '{print $2}')"
   diagnose_apps "$failed_apps"
   
 elif [ "$1" == 'multi-uninstall' ] || [ "$1" == 'multi-install' ];then
@@ -639,27 +564,16 @@ elif [ "$1" == 'install' ] || [ "$1" == 'uninstall' ];then
     mv "$logfile" "$(echo "$logfile" | sed 's+-incomplete-+-success-+g')" #rename logfile to indicate it was successful
     
   else #if app failed to install/uninstall
-
+    
     #remove dummy deb if app failed to install (to avoid dummy debs being left on a users install for broken apps)
     package_name="$(app_to_pkgname "$app")"
     if [[ ${action} == "install" ]] && [[ "$(app_type "$app")" == standard ]] && package_installed "$package_name"; then
-      if [[ "$script_input" == "update" ]]; then
-        #if install failed as part of an update, don't autoremove the packages, only purge the dummy deb
-        output="$(sudo -E apt purge -y $package_name 2>&1 | less_apt | tee /dev/stderr)"
-        if [ $? != 0 ];then
-          echo "$output" | tee -a "$logfile"
-          warning "Failed to purge dummy deb ($package_name)" 2>&1 | tee -a "$logfile"
-        else
-          echo "$output" | tee -a "$logfile"
-        fi
-        unset output
-      else
-        #install and not update failed, run purge_packages
-        purge_packages &>/dev/null
-      fi
+      #Run purge_packages
+      echo $'\n'"Running purge_packages..." >> "$logfile"
+      purge_packages 2>&1 | tee -a "$logfile" >/dev/null
     fi
     unset package_name
-
+    
     echo -e "\n\e[91mFailed to ${action} ${app}!\e[39m
 \e[40m\e[93m\e[5m◢◣\e[25m\e[39m\e[49m\e[93mNeed help? Copy the \e[1mENTIRE\e[0m\e[49m\e[93m terminal output or take a screenshot.
 Please ask on Github: \e[94m\e[4mhttps://github.com/Botspot/pi-apps/issues/new/choose\e[24m\e[93m
