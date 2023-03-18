@@ -9,20 +9,16 @@ The design is inspired by Windows 8's Metro design. Tiles are configured in
 ```../tmp.json```, they can either open new pages of tiles or execute the action
 script ```pimenu.sh``` to execute arbitrary tasks.
 
-On the Raspberry, install python-json:
+On the Raspberry, install python-json if not present(it is normally in the core of python3):
 
-    sudo apt-get install python-yaml
+    sudo apt-get install python3-json
 
-Copy the example configs before running the script:
 
-    cp pimenu.yaml{.dist,}
-    cp pimenu.sh{.dist,}
 
 The app can be started in fullscreen by passing ```fs``` as second parameter.
 
-    ./pimenu.py fs
+    ./pimenu.py "" fs
 
-![Screenshot](screenshot.png)
 
 License
 -------
