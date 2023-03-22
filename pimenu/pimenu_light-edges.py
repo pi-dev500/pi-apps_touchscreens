@@ -9,7 +9,7 @@ from math import sqrt, floor, ceil
 #from tkinterhtml import HtmlFrame as HTMLLabel #import the HTML browser #HtmlLabel as
 import json
 #import webbrowser
-from terminal import Terminal
+from tkterminal import Terminal
 from tkinter import (
         constants as TkC,
 )
@@ -20,6 +20,7 @@ except ImportError:
     
 def pi_apps_mainpage():
     os.system("nohup x-www-browser https://pi-apps.io &>/dev/null &")
+    print("exit")
     quit()
 class SimpleFlatButton(Button):
     def __init__(self, master=None, cnf=None, **kw):
@@ -254,7 +255,7 @@ class PiMenu(Frame):
         if len(items) > maxitems:
             cols=round(self.master.winfo_width()/200)
             rows=round(self.master.winfo_height()/150)
-            items=items[0:maxitems-1]
+            items=items[0:maxitems]
         else:
             rows = floor(sqrt(allitems))
             cols = ceil(allitems / rows)
@@ -404,14 +405,15 @@ def main():
         root.wm_attributes('-fullscreen', True)
     btn_frame = Frame(root, bg=pabc, height=120)
     img = PhotoImage(file=os.path.dirname(os.path.realpath(sys.argv[0])) + "/ico/proglogo.png")
-    pi_apps_btn = SimpleFlatButton(btn_frame, image=img, command=pi_apps_mainpage)#
-    pi_apps_btn.set_color(pabc)
+    pi_apps_btn = Label(btn_frame, image=img)#
+    pi_apps_btn.configure(background=pabc)
     pi_apps_btn.pack()
     close_btn_image=PhotoImage(file=os.path.dirname(os.path.realpath(sys.argv[0])) + "/ico/close.png")
     close_btn=SimpleFlatButton(btn_frame,text="Close", image=close_btn_image, command=quit_pi_apps )
     close_btn.set_color(pabc)
     btn_frame.update()
-
+    btn_frame.bind("<1>", lambda x: pi_apps_mainpage())
+    pi_apps_btn.bind("<1>", lambda x: pi_apps_mainpage())
     tips_secure=Frame(btn_frame, height=30, bg=pabc)
     tips_secure.pack(fill='x',expand=True)
     tips_secure.pack_propagate(False)
@@ -423,9 +425,9 @@ def main():
     btn_frame.update()
     tabs_frame=Frame(root, bg=pabc)
     tabs_frame.pack(fill="both")
-    tab_pimenu=FlatButton(tabs_frame, text="Apps Menu")
+    tab_pimenu=SimpleFlatButton(tabs_frame, text="Apps Menu")
     tab_pimenu.set_color(pabc)
-    tab_terminal=FlatButton(tabs_frame, text="Terminal")
+    tab_terminal=SimpleFlatButton(tabs_frame, text="Terminal")
     tab_terminal.set_color(pabc)
     tab_pimenu.pack(side="left",expand=True,fill='both')
     tab_terminal.pack(side="left",expand=True,fill='both')
