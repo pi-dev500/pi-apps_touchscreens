@@ -6,9 +6,7 @@ import subprocess
 import sys
 from tkinter import *
 from math import sqrt, floor, ceil
-#from tkinterhtml import HtmlFrame as HTMLLabel #import the HTML browser #HtmlLabel as
 import json
-#import webbrowser
 from tkterminal import Terminal
 from tkinter import (
         constants as TkC,
@@ -230,7 +228,8 @@ class PiMenu(Frame):
         
         # create a new frame
         wrap = Frame(self, bg=self.bg)
-        
+        search_back = Frame(self, bg=self.bg)
+        fake_scrollbar = Frame(self, bg=self.bg)
         if len(self.framestack):
             # when there were previous frames, hide the top one and add a back button for the new one
             self.hide_top()
@@ -436,6 +435,7 @@ def main():
     piframe.pack(fill=TkC.BOTH, expand=1)
     terminal=Terminal(piframe)
     terminal.display_false()
+    terminal.run("bash")
     pimenu=PiMenu(piframe,pabc)
     def tabswitch(tab):
         if tab==2:
@@ -452,7 +452,7 @@ def main():
             tab_pimenu.configure(activebackground=colorscale(pabc, 60))
     tab_pimenu.configure(command=lambda: tabswitch(1))
     tab_terminal.configure(command=lambda: tabswitch(2))
-    tabswitch(1)
+    tabswitch(2)
     #pimenu.pack_forget()
     root.mainloop()
     #btn_frame.winfo_width()

@@ -4,6 +4,7 @@ import os
 import sys
 from math import *
 from time import sleep
+classdir=os.path.dirname(os.path.abspath(__file__))
 subprocess.run(["xrdb", "-merge", os.path.dirname(os.path.abspath(__file__)) + "/Xdefaults"])
 class Terminal(tk.Frame):
     def __init__(self, master=None, font='Monospace', size=12):
@@ -21,11 +22,11 @@ class Terminal(tk.Frame):
         self.run(command='true')
         # Get the xterm_frame window ID
         xterm_window_id = self.xterm_frame.winfo_id()
-        print(xterm_window_id)
+        self.id=xterm_window_id
         if xterm_window_id:
             # Launch the xterm window with the appropriate font
-            xterm_command="'python command_tkterm " + str(xterm_window_id) + " && sleep 10'"
-            command = f"xterm -ah -into {xterm_window_id} -rightbar -fa '{font}' -fs '{size}' -e '{xterm_command}' &>/dev/null"
+            xterm_command="bash -c 'python " + classdir + "/command_tkterm " + str(xterm_window_id) + " || sleep 10'"
+            command = f"xterm -ah -into {xterm_window_id} -rightbar -fa '{font}' -fs '{size}' -e {xterm_command} &>/dev/null"
             subprocess.Popen([command], shell=True)
         else:
             print("Unable to get window ID for xterm")
@@ -36,7 +37,7 @@ class Terminal(tk.Frame):
             reso.write("\e[8;" + str(height) + ";" + str(width) + "t")
         self.after(50, self.update_resolution)
     def run(self, command="bash"):
-        with open("/tmp/tkTerm" + str(self.xterm_frame.winfo_id()), 'w') as command_file:
+        with open("/tmp/tkTerm" + str(self.xterm_frame.winfo_id()), 'a') as command_file:
             command_file.write("\n" + command)
     def display_true(self):
         self.xterm_frame.pack(fill="both", expand=True)
@@ -47,8 +48,7 @@ class Terminal(tk.Frame):
 if __name__=="__main__":
     root = tk.Tk()
     root.title("TkTerminal")
-    #root.attributes("-fullscreen", True)
     root.geometry("700x600")
     app = Terminal(root)
-    root.after(2000,app.run)
+    app.run()
     root.mainloop()
