@@ -15,17 +15,20 @@ if ARCH != "64" and ARCH != "32":
 def loadapp(name):
     icon=DIRECTORY + "/apps/" + name + "/icon-64.png"
     color = "#0000ff"
-    with open(DIRECTORY + "/apps/" + name + "/website", 'r') as website_f:
-        website = website_f.readline()[:-1]
+    try:
+        with open(DIRECTORY + "/apps/" + name + "/website", 'r') as website_f:
+            website = website_f.readline()[:-1]
+    except FileNotFoundError:
+        website=""
     description = DIRECTORY + "/apps/" + name + "/description"
     if os.path.exists(DIRECTORY + "/data/status/" + name):
         with open(DIRECTORY + "/data/status/" + name, 'r') as f_status:
-            status=f_status.readline()[:-1]
+            status="(" + f_status.readline()[:-1] + ")"
     else:
-        status='uninstalled'
+        status='(uninstalled)'
     with open(DIRECTORY + "/pimenu/tmp.json", "w") as tmp:
         tmp.write(json.dumps([{"label": "App Details"},{"name": name, "icon":icon, "website": website, "description": description, "status": status, "color_sheme": color}]))
-    quit()
+
 def getdefs(name, arg):
     if name.endswith("/"):
         if os.path.exists(DIRECTORY + "/icons/categories/" + name[:-1] + "-64.png"):
@@ -43,16 +46,20 @@ def getdefs(name, arg):
         value = name
         if os.path.exists(DIRECTORY + "/data/status/" + name):
             with open(DIRECTORY + "/data/status/" + name, 'r') as f_status:
-                status=f_status.readline()[:-1]
+                status="("+ f_status.readline()[:-1] + ")"
         else:
-            status='uninstalled'
+            status='(uninstalled)'
     return({'label': label, 'name': value, 'status': status, 'icon': icon, 'color': color})
 
 
 if len(sys.argv) <= 1:
     arg="./"
+
 elif sys.argv[1] == "":
     arg="./"
+elif sys.argv[1] in os.listdir(DIRECTORY + "/apps"):
+    loadapp(sys.argv[1])
+    quit(0)
 elif sys.argv[1] == "back":
     with open(DIRECTORY + "/pimenu/c_dir", 'r') as data:
         dit=data.readline()
@@ -60,6 +67,9 @@ elif sys.argv[1] == "back":
             arg=os.path.dirname(os.path.dirname(dit)) + "/"
         else:
             arg='./'
+elif sys.argv[1] == ".reload":
+    with open(DIRECTORY + "/pimenu/c_dir", 'r') as data:
+        arg=data.readline()
 else:
     arg=sys.argv[1]
 CURRENT_DIR=arg
@@ -70,8 +80,8 @@ tree=list()
 for appc in categories:
     appc=appc.split('|')
     appc[1]="./" + appc[1] + "/"
-    if os.path.exists(DIRECTORY + "/apps/" + appc[0] + "/install") or os.path.exists(DIRECTORY + "/apps/" + appc[0] + "/install-" + ARCH) or os.path.exists(DIRECTORY + "/apps/" + appc[0] + "/package"):
-        if not "./All Apps/"+appc[0] in tree:
+    if os.path.exists(DIRECTORY + "/apps/" + appc[0] + "/install") or os.path.exists(DIRECTORY + "/apps/" + appc[0] + "/install-" + ARCH) or os.path.exists(DIRECTORY + "/apps/" + appc[0] + "/packages"):
+        if not "./All Apps/"+appc[0] in tree and arg == "./All Apps/":
             tree.append("./All Apps/"+appc[0])
         tree.append(appc[1] + appc[0])
         
@@ -88,14 +98,15 @@ if arg == "./Installed/":
         if stat=="installed\n":
             list_apps.append("./Installed/" + file)
         
-list_apps = list(set(list_apps))
+
 list_apps.sort()
 if arg=="./":
     items_dirs=[getdefs("All Apps/", "./"), getdefs("Installed/", "./")]
 else:
     items_dirs=list()
 items_apps=list()
-
+list_apps=list(set(list_apps))
+list_apps.sort()
 for item in list_apps:
     name=item.split('/')[-1]
     if os.path.exists(DIRECTORY + "/apps/" + name):
@@ -104,8 +115,8 @@ for item in list_apps:
         items_dirs.append(getdefs(name + "/", arg))
         
 items=items_dirs + items_apps
-print(json.dumps(items))
+#print(json.dumps(items))
 with open(DIRECTORY + "/pimenu/tmp.json", "w") as tmp:
-    tmp.write(json.dumps(items) + "\n")
+    tmp.write(json.dumps([{'label':"Show list"},arg]+items) + "\n")
 with open(DIRECTORY + "/pimenu/c_dir", "w") as tmp:
     tmp.write(CURRENT_DIR)

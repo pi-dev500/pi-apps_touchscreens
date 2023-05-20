@@ -1,9 +1,0 @@
-```
-while inotifywait -e modify /tmp/pi_apps_queue ; do
-    manage ...
-done
-#sudo apt install inotify-tools
-
-```
-use exemples
-

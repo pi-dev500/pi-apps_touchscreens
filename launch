@@ -1,8 +1,0 @@
-#!/bin/bash
-DIR="$(dirname "$(realpath "$0")")"
-if [ ! -f "$DIR/data/announcements" ] || [ ! -z "$(find "$DIR/data/announcements" -mtime +1 -print)" ]; then
-  wget -qO- --no-check-certificate "https://raw.githubusercontent.com/Botspot/pi-apps-announcements/main/message" | grep -v "<*>" | shuf -n 1 >"$DIR/announcement"
-  cat "$DIR/announcement"
-fi
-cd "$DIR/pimenu"
-"$DIR/pimenu/pimenu_light-edges.py" "$(cat "$DIR/announcement")" | "$DIR"/backgroundmanage background

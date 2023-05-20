@@ -15,7 +15,7 @@ try:
     from tkhtmlview import HTMLLabel
 except ImportError:
     os.system("pkexec pip3 install tkhtmlview")
-    
+    from tkhtmlview import HTMLLabel
 def pi_apps_mainpage():
     os.system("nohup x-www-browser https://pi-apps.io &>/dev/null &")
     print("exit")
@@ -89,23 +89,66 @@ class FlatButton(Button):
             activeforeground="white",
             highlightbackground=colorscale(color, 60)
         )
+class SearchFrame(Frame):
+    icons={}
+    path = os.path.dirname(os.path.realpath(sys.argv[0]))
+    def __init__(self, parent,pabc):
+        Frame.__init__(self, parent, bg=pabc,height=40)
+        self.path = os.path.dirname(os.path.realpath(sys.argv[0]))
+        self.pack_propagate(False)
+        self.back_btn=SimpleFlatButton(self,image=self.get_icon("cancel.gif"))
+        self.back_btn.set_color("#00a300")
+        self.back_btn.grid(column=0,row=0,padx=0,pady=0,sticky=TkC.W + TkC.E + TkC.N + TkC.S)
+        self.searchbox=Entry(self,font=("Serif",24),relief="flat")
+        self.searchbox.grid(column=1,row=0,padx=0,pady=0,sticky=TkC.W + TkC.E + TkC.N + TkC.S)
+        self.searchbutton=SimpleFlatButton(self,image=self.get_icon(self.path+"/ico/search_icon.png"),width=40,command=lambda: self.back_btn.pack_forget())
+        self.searchbutton.set_color(pabc)
+        self.searchbutton.grid(column=2,row=0,padx=0,pady=0,sticky=TkC.W + TkC.E + TkC.N + TkC.S)
+    def get_icon(self, name):
+        """
+        Loads the given icon and keeps a reference
 
+        :param name: string
+        :return:
+        """
+        if name in self.icons:
+            return self.icons[name]
+
+        ico = name
+        if not os.path.isfile(ico):
+            ico = self.path + '/ico/' + name + '.gif'
+            if not os.path.isfile(ico):
+                ico = self.path + '/ico/cancel.gif'
+
+        self.icons[name] = PhotoImage(file=ico)
+        return self.icons[name]
+   
+        
 class PiMenu(Frame):
     framestack = []
     icons = {}
     path = ''
     lastinit = 0
-
+    pages_data=[]
     def __init__(self, parent,pabc):
         Frame.__init__(self, parent, bg=pabc)
         self.parent = parent
         self.pack(fill=TkC.BOTH, expand=1)
         self.bg=pabc
-
+        self.search_frame=SearchFrame(self,pabc)
+        self.search_frame.back_btn.configure(command=self.goback)
+        #self.search_frame.pack_propagate(False)
+        self.search_frame.pack(fill="both")
         self.path = os.path.dirname(os.path.realpath(sys.argv[0]))
         self.initialize()
+        self.app_details_frame=Frame(self)
+    def goback(self,arg=0):
+        os.system("python3 "+self.path+"/preload.py back")
+        self.reinit()
     def reinit(self):
-        self.destroy_all()
+        self.wrap.destroy()
+        self.app_details_frame.destroy()
+        print("reinit")
         self.initialize()
     def initialize(self):
         """
@@ -114,22 +157,23 @@ class PiMenu(Frame):
 
         :return: None
         """
-        with open(self.path + '/../tmp.json', 'r') as f:
+        with open(self.path + '/tmp.json', 'r') as f:
             file=f.readline()
             doc = json.loads(file)
-
 
         if len(self.framestack):
             self.destroy_all()
             self.destroy_top()
         item1=doc[0]
         if item1['label'] == 'App Details':
-           self.load_app(doc[1])
+            self.load_app(doc[1])
         else:
-            self.show_items(doc)
+            self.page=doc[1]
+            self.show_items(doc[2:])
         self.bind("<Configure>",lambda x: self.reinit())
     def load_app(self,item):
-        app_details_frame = Frame(self,bg=self.bg)
+        self.search_frame.pack_forget()
+        self.app_details_frame = Frame(self,bg=self.bg)
         #functions
         def gotowebsite(*args): #open website and close pimenu
             os.system("x-www-browser " + item['website'] + " >/dev/null &")
@@ -137,15 +181,15 @@ class PiMenu(Frame):
             
         def back():#go back to app menu using pimenu.sh script
             os.system(self.path + '/pimenu.sh' + ' ' + '.reload')# bash instance
-            app_details_frame.destroy()#----destroy details
+            self.app_details_frame.destroy()#----destroy details
             self.initialize()          #----reload script
         
         #App label, status and icon + back button
         #get the icon for app label
         icon = self.get_icon(item['icon'])
-        print('Status Message:App Details\n')
-        print("Status Message:" + item['name'])# + "\n" + item['status'] + "\n")
-        app_label_frame=Frame(app_details_frame, bg=self.bg)
+        #print('Status Message:App Details\n')
+        #print("Status Message:" + item['name'])# + "\n" + item['status'] + "\n")
+        app_label_frame=Frame(self.app_details_frame, bg=self.bg)
         
         #back button
         back_button=SimpleFlatButton(app_label_frame, image=self.get_icon('xzxzxzxzxzxzxzxzxzx'))
@@ -158,7 +202,7 @@ class PiMenu(Frame):
         app_label.pack(side='left')#grid(column=1,row=0)
         app_label_frame.pack(anchor='nw',fill='x')
         app_label.bind('<1>', gotowebsite)
-        print("Status Message:" + item['website'] + "\n")
+        #print("Status Message:" + item['website'] + "\n")
         
         # app managing buttons
         def install():
@@ -172,12 +216,12 @@ class PiMenu(Frame):
             install_btn.set_color('green')
             install_btn.pack(side='right',fill='both',expand=1)
             #btn_place=self.winfo_width()
-        if item['status'] == '(installed)':
+        elif item['status'] == '(installed)':
             uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...",command=uninstall)
             uninstall_btn.set_color('red')
             uninstall_btn.pack(side='right',fill='both',expand=1)
             #btn_place=self.winfo_width()
-        if item['status'] == '(corrupted)':
+        else:
             manage_buttons_frame.config(width=200)
             uninstall_btn=FlatButton(manage_buttons_frame, image=self.get_icon(self.path + '/../icons/uninstall.png'), text="Uninstall...",command=uninstall)
             uninstall_btn.set_color('red')
@@ -192,11 +236,11 @@ class PiMenu(Frame):
         #Description
         with open(item['description'], 'r') as f:
             description=f.readlines()
-        textframe=Frame(app_details_frame)
+        textframe=Frame(self.app_details_frame)
         textframe.pack(side="left", fill=TkC.BOTH,expand=1)
         text=""
         for i in description:
-            print("Description Message: " + i)
+            #print("Description Message: " + i)
             text=text + "\n" + i
         description=Text(textframe, wrap = WORD)
         description.pack(fill=TkC.BOTH,expand=1)
@@ -204,7 +248,7 @@ class PiMenu(Frame):
         description['state'] = 'disabled'
         
         #End of description script
-        app_details_frame.pack(fill=TkC.BOTH,expand=1) # affichage
+        self.app_details_frame.pack(fill=TkC.BOTH,expand=1) # affichage
         
     def has_config_changed(self):
         """
@@ -214,7 +258,7 @@ class PiMenu(Frame):
         """
         return self.lastinit != os.path.getmtime(self.path + '/pimenu.yaml')
 
-    def show_items(self, items, upper=None):
+    def show_items(self, doc, upper=None):
         """
         Creates a new page on the stack,
 
@@ -225,45 +269,51 @@ class PiMenu(Frame):
         if upper is None:
             upper = []
         num = 0
-        
+        self.search_frame.pack(fill="both")
+        if not self.page == "./":
+            self.search_frame.back_btn.grid()
+        else:
+            self.search_frame.back_btn.grid_remove()
         # create a new frame
-        wrap = Frame(self, bg=self.bg)
-        search_back = Frame(self, bg=self.bg)
-        fake_scrollbar = Frame(self, bg=self.bg)
-        if len(self.framestack):
+        self.wrap = Frame(self, bg=self.bg)
+        #search_back = Frame(self, bg=self.bg)
+        #fake_scrollbar = Frame(self, bg=self.bg)
+        if False :#len(self.framestack):
             # when there were previous frames, hide the top one and add a back button for the new one
             self.hide_top()
             back = FlatButton(
-                wrap,
+                self.wrap,
                 text='back',
-                image=self.get_icon("arrow.left"),
-                command=self.go_back,
+                image=self.get_icon("cancel"),
+                command=goback,
             )
             back.set_color("#00a300")  # green
             back.grid(row=0, column=0, padx=0, pady=0, sticky=TkC.W + TkC.E + TkC.N + TkC.S)
             num += 1
 
         # add the new frame to the stack and display it
-        self.framestack.append(wrap)
+        self.framestack.append(self.wrap)
         self.show_top()
         self.pack(expand=True,fill="both")
-        maxitems=round(self.master.winfo_width()/200)*round(self.master.winfo_height()/150)
+        maxitems=floor(self.master.winfo_width()/200)*floor(self.master.winfo_height()/150)
         os.system("echo " + str(maxitems) + " >/dev/stderr")
         # calculate tile distribution
-        allitems = len(items) + num
-        if len(items) > maxitems:
-            cols=round(self.master.winfo_width()/200)
-            rows=round(self.master.winfo_height()/150)
-            items=items[0:maxitems]
+        allitems = len(doc)
+        if len(doc) > maxitems:
+            cols=floor(self.master.winfo_width()/200)
+            rows=floor(self.master.winfo_height()/150)
+            
+            items=doc[0:maxitems]
+            page=1
         else:
-            rows = floor(sqrt(allitems))
+            items=doc
+            rows = ceil(sqrt(allitems))
             cols = ceil(allitems / rows)
-
         # make cells autoscale
         for x in range(int(cols)):
-            wrap.columnconfigure(x, weight=1)
+            self.wrap.columnconfigure(x, weight=1)
         for y in range(int(rows)):
-            wrap.rowconfigure(y, weight=1)
+            self.wrap.rowconfigure(y, weight=1)
 
         # display all given buttons
         for item in items:
@@ -275,7 +325,7 @@ class PiMenu(Frame):
                 image = self.get_icon('scrabble.' + item['label'][0:1].lower())
 
             btn = FlatButton(
-                wrap,
+                self.wrap,
                 text=item['label'] + "\n" + item['status'],
                 image=image
             )
@@ -386,22 +436,39 @@ class PiMenu(Frame):
             self.show_top()
 
 
-def quit_pi_apps():
-    print("exit")
-    quit()
+
     
 
 def main():
+    if len(sys.argv)<=1:
+        sys.argv.append("")
     root = Tk()
+    def quit_pi_apps():
+        print("exit")
+        root.destroy()
+    
     root.geometry("640x480")
     root.wm_title('PiMenu')
-    root.attributes('-alpha',0.0)
+    root.wm_attributes('-alpha',0)
     root.protocol("WM_DELETE_WINDOW", lambda: quit_pi_apps())
     pabcf = open(os.path.dirname(os.path.realpath(sys.argv[0])) + "/settings/Pi_apps_button_color")
     pabc = pabcf.read()
 
     if len(sys.argv) > 2 and sys.argv[2] == 'fs':
         root.wm_attributes('-fullscreen', True)
+        root.is_fullscreen=True
+    else:
+        root.is_fullscreen=False
+    def switch_fullscreen(char):
+        if char.keycode==95:
+            if root.is_fullscreen:
+                root.wm_attributes('-fullscreen', False)
+                root.is_fullscreen=False
+            else:
+                root.wm_attributes('-fullscreen', True)
+                root.is_fullscreen=True
+    root.bind("<KeyRelease>",switch_fullscreen)
+    
     btn_frame = Frame(root, bg=pabc, height=120)
     img = PhotoImage(file=os.path.dirname(os.path.realpath(sys.argv[0])) + "/ico/proglogo.png")
     pi_apps_btn = Label(btn_frame, image=img)#
@@ -430,7 +497,7 @@ def main():
     tab_terminal.set_color(pabc)
     tab_pimenu.pack(side="left",expand=True,fill='both')
     tab_terminal.pack(side="left",expand=True,fill='both')
-    os.system(os.path.dirname(os.path.realpath(sys.argv[0])) + '/updateyaml reset')
+    os.system("python3 " + os.path.dirname(os.path.realpath(sys.argv[0])) + '/preload.py')
     close_btn.place(anchor = "ne", relx = 1.0 , rely = 0)
     piframe.pack(fill=TkC.BOTH, expand=1)
     terminal=Terminal(piframe)
@@ -452,7 +519,7 @@ def main():
             tab_pimenu.configure(activebackground=colorscale(pabc, 60))
     tab_pimenu.configure(command=lambda: tabswitch(1))
     tab_terminal.configure(command=lambda: tabswitch(2))
-    tabswitch(2)
+    tabswitch(1)
     #pimenu.pack_forget()
     root.mainloop()
     #btn_frame.winfo_width()
