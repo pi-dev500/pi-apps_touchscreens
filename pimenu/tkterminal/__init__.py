@@ -18,7 +18,7 @@ class Terminal(tk.Frame):
         self.xterm_frame.pack(fill="both", expand=True)
         # Wait for the xterm_frame to be created
         self.xterm_frame.update_idletasks()
-        self.update_resolution()
+        self.master.bind("<Configure>",self.update_resolution)
         self.run(command='true')
         # Get the xterm_frame window ID
         xterm_window_id = self.xterm_frame.winfo_id()
@@ -30,12 +30,12 @@ class Terminal(tk.Frame):
             subprocess.Popen([command], shell=True)
         else:
             print("Unable to get window ID for xterm")
-    def update_resolution(self):
+    def update_resolution(self,a1=1):
         with open("/tmp/tkTermrs" + str(self.xterm_frame.winfo_id()), 'w') as reso:
             width = round(self.xterm_frame.winfo_width() / 10) - 1
             height = round(self.xterm_frame.winfo_height() / 19) - 1
             reso.write("\e[8;" + str(height) + ";" + str(width) + "t")
-        self.after(50, self.update_resolution)
+        #self.after(50, self.update_resolution)
     def run(self, command="bash"):
         with open("/tmp/tkTerm" + str(self.xterm_frame.winfo_id()), 'a') as command_file:
             command_file.write("\n" + command)

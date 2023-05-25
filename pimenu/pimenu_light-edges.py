@@ -93,15 +93,15 @@ class SearchFrame(Frame):
     icons={}
     path = os.path.dirname(os.path.realpath(sys.argv[0]))
     def __init__(self, parent,pabc):
-        Frame.__init__(self, parent, bg=pabc,height=40)
+        Frame.__init__(self, parent, bg=pabc,height=48)
         self.path = os.path.dirname(os.path.realpath(sys.argv[0]))
-        self.pack_propagate(False)
+        self.grid_propagate(False)
         self.back_btn=SimpleFlatButton(self,image=self.get_icon("cancel.gif"))
         self.back_btn.set_color("#00a300")
         self.back_btn.grid(column=0,row=0,padx=0,pady=0,sticky=TkC.W + TkC.E + TkC.N + TkC.S)
-        self.searchbox=Entry(self,font=("Serif",24),relief="flat")
+        self.searchbox=Entry(self,font=("Serif",28),relief="flat")
         self.searchbox.grid(column=1,row=0,padx=0,pady=0,sticky=TkC.W + TkC.E + TkC.N + TkC.S)
-        self.searchbutton=SimpleFlatButton(self,image=self.get_icon(self.path+"/ico/search_icon.png"),width=40,command=lambda: self.back_btn.pack_forget())
+        self.searchbutton=SimpleFlatButton(self,image=self.get_icon(self.path+"/ico/search_icon.png"),width=40,command=self.back_btn.pack_forget)
         self.searchbutton.set_color(pabc)
         self.searchbutton.grid(column=2,row=0,padx=0,pady=0,sticky=TkC.W + TkC.E + TkC.N + TkC.S)
     def get_icon(self, name):
@@ -122,7 +122,10 @@ class SearchFrame(Frame):
 
         self.icons[name] = PhotoImage(file=ico)
         return self.icons[name]
-   
+    def get(self):
+        return self.searchbox.get()
+    def deltext(self):
+        self.searchbox.delete(0,END)
         
 class PiMenu(Frame):
     framestack = []
@@ -133,22 +136,30 @@ class PiMenu(Frame):
     def __init__(self, parent,pabc):
         Frame.__init__(self, parent, bg=pabc)
         self.parent = parent
-        self.pack(fill=TkC.BOTH, expand=1)
+        #self.pack(fill=TkC.BOTH, expand=1)
         self.bg=pabc
         self.search_frame=SearchFrame(self,pabc)
         self.search_frame.back_btn.configure(command=self.goback)
         #self.search_frame.pack_propagate(False)
         self.search_frame.pack(fill="both")
+        self.search_frame.searchbox.bind("<KeyRelease>",self.reinit)
         self.path = os.path.dirname(os.path.realpath(sys.argv[0]))
         self.initialize()
         self.app_details_frame=Frame(self)
     def goback(self,arg=0):
-        os.system("python3 "+self.path+"/preload.py back")
+        if self.page == "./Search/":
+            os.system("python3 "+self.path+"/preload.py .reload")
+            self.search_frame.deltext()
+        else:
+            os.system("python3 "+self.path+"/preload.py back")
         self.reinit()
-    def reinit(self):
+    def reinit(self,fakearg=None):
+        if self.search_frame.get() != "":
+            os.system("python3 "+self.path+"/preload.py './Search/' '" +self.search_frame.get()+"'")
+        elif self.page == "./Search/":
+            os.system("python3 "+self.path+"/preload.py .reload")
         self.wrap.destroy()
         self.app_details_frame.destroy()
-        print("reinit")
         self.initialize()
     def initialize(self):
         """
@@ -296,10 +307,10 @@ class PiMenu(Frame):
         self.show_top()
         self.pack(expand=True,fill="both")
         maxitems=floor(self.master.winfo_width()/200)*floor(self.master.winfo_height()/150)
-        os.system("echo " + str(maxitems) + " >/dev/stderr")
+        #os.system("echo " + str(maxitems) + " >/dev/stderr") # display max item count
         # calculate tile distribution
         allitems = len(doc)
-        if len(doc) > maxitems:
+        if len(doc) > maxitems or allitems == 0:
             cols=floor(self.master.winfo_width()/200)
             rows=floor(self.master.winfo_height()/150)
             
@@ -511,6 +522,7 @@ def main():
             tab_pimenu.set_color(pabc)
             tab_terminal.set_color(colorscale(pabc, 60))
             tab_terminal.configure(activebackground=colorscale(pabc, 60))
+            terminal.update_resolution()
         else:
             terminal.display_false()
             pimenu.pack(expand=True, fill='both')

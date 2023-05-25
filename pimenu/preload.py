@@ -50,13 +50,21 @@ def getdefs(name, arg):
         else:
             status='(uninstalled)'
     return({'label': label, 'name': value, 'status': status, 'icon': icon, 'color': color})
-
+def search():
+    final=[]
+    for app in os.listdir(DIRECTORY+"/apps"):
+        if (os.path.exists(DIRECTORY + "/apps/" + app + "/install") or os.path.exists(DIRECTORY + "/apps/" + app + "/install-" + ARCH) or os.path.exists(DIRECTORY + "/apps/" + app + "/packages")) and sys.argv[2].casefold() in app.casefold():
+            final.append(getdefs(app,"./Search"))
+    with open(DIRECTORY + "/pimenu/tmp.json", "w") as tmp:
+        tmp.write(json.dumps([{'label':"Show list"},"./Search/"]+final) + "\n")
+    quit()
 
 if len(sys.argv) <= 1:
     arg="./"
-
 elif sys.argv[1] == "":
     arg="./"
+elif sys.argv[1] =="./Search/":
+    search()
 elif sys.argv[1] in os.listdir(DIRECTORY + "/apps"):
     loadapp(sys.argv[1])
     quit(0)
